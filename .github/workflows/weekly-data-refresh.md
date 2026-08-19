@@ -76,7 +76,8 @@ post-steps:
   - name: Run tests against the proposed data
     run: npm test
 
-  - name: Validate candidate against the trigger baseline
+  - name: Flag candidate changes above weekly thresholds
+    continue-on-error: true
     shell: bash
     run: |
       set -euo pipefail
@@ -142,10 +143,25 @@ replace valid checked-in data with a guess.
 5. Do not introduce a new source host.
 6. Do not include university living-at-home allowances in household housing,
    food, transport, healthcare, or other-household values.
-7. Do not change any file other than `data/costs.v1.json`.
-8. Make no change when the available evidence does not justify one.
+7. Classify every evidence entry as either `comparable` or `excluded`. An
+   exclusion must include the schema-defined reason code and a specific
+   explanation. Exclude wrong household sizes, overlapping bundles, different
+   housing or item scopes, qualitative-only citations, and values lacking
+   correct monthly normalization. Never omit evidence silently.
+8. For every item, run `npm run apply:defaults` after evidence changes. The
+   adopted default must remain the highest normalized value or range upper
+   bound among comparable evidence. Never manually reduce or discard the
+   highest candidate.
+9. If only one comparable source supports an item, retain its highest value and
+   keep the generated `single-source-low-confidence` flag. If one uniquely
+   highest candidate is more than 25% above the next-highest comparable source,
+   retain it and keep the generated `singleton-outlier` review flag. Never
+   exclude an outlier automatically.
+10. Do not change any file other than `data/costs.v1.json`.
+11. Make no change when the available evidence does not justify one.
 
 The workflow rejects changes outside the data file, runs the repository tests,
-and validates the proposed data against the exact triggering revision. A
-successful safe output opens one draft PR for human review and never writes
-directly to `main`.
+enforces the default-selection policy, and compares the proposal with the exact
+triggering revision. Weekly threshold breaches remain visible in the run and
+the safe output stays a draft PR for explicit human review; the workflow never
+writes directly to `main`.

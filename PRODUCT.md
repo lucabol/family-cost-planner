@@ -41,6 +41,7 @@ The original self-contained prototype is the UX and content baseline. Its cited 
 ## Product Principles
 
 - Evidence before certainty.
+- Adopt the highest comparable normalized upper bound; flag thin or outlying evidence without automatically reducing it.
 - Personal inputs stay private and editable.
 - Safe automation never degrades known-good data.
 - Official sources outrank portals and crowd-sourced estimates.

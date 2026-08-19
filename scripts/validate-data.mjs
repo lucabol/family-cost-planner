@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
+import { deriveDefaultSelection } from "./apply-default-policy.mjs";
 
 const CITY_ITEMS = {
   javea: [
@@ -100,6 +102,10 @@ export function validateSemantics(data, baseline) {
       if (!item.evidence?.length) {
         errors.push(`${city.id}/${item.id}: at least one citation is required`);
       }
+      const itemSourceIds = item.evidence?.map((evidence) => evidence.sourceId) ?? [];
+      if (duplicates(itemSourceIds).length) {
+        errors.push(`${city.id}/${item.id}: evidence source IDs must be unique`);
+      }
       for (const evidence of item.evidence ?? []) {
         if (!sourceSet.has(evidence.sourceId)) {
           errors.push(`${city.id}/${item.id}: unknown source ${evidence.sourceId}`);
@@ -108,11 +114,47 @@ export function validateSemantics(data, baseline) {
         if ("min" in normalized && "max" in normalized && normalized.min > normalized.max) {
           errors.push(`${city.id}/${item.id}: normalized range is inverted`);
         }
-        if (evidence.includedInDefault && evidence.overlaps?.length) {
+        if (
+          evidence.original?.unit === "qualitative" &&
+          (evidence.comparison?.status !== "excluded" || evidence.monthlyNormalized !== null)
+        ) {
           errors.push(
-            `${city.id}/${item.id}: overlapping allowance cannot be included in the default`
+            `${city.id}/${item.id}/${evidence.sourceId}: qualitative evidence must be ` +
+              "excluded and must not claim a numeric monthly normalization"
           );
         }
+        if (
+          evidence.comparison?.status === "comparable" &&
+          evidence.monthlyNormalized === null
+        ) {
+          errors.push(
+            `${city.id}/${item.id}/${evidence.sourceId}: comparable evidence requires ` +
+              "a valid monthly normalization"
+          );
+        }
+        if (evidence.comparison?.status === "comparable" && evidence.overlaps?.length) {
+          errors.push(
+            `${city.id}/${item.id}: overlapping allowance cannot be a comparable default candidate`
+          );
+        }
+      }
+
+      try {
+        const expectedSelection = deriveDefaultSelection(item);
+        if (item.defaultMonthly !== expectedSelection.selectedMonthlyValue) {
+          errors.push(
+            `${city.id}/${item.id}: adopted default must equal the highest comparable ` +
+              `monthly upper bound (${expectedSelection.selectedMonthlyValue})`
+          );
+        }
+        if (!isDeepStrictEqual(item.defaultSelection, expectedSelection)) {
+          errors.push(
+            `${city.id}/${item.id}: default selection provenance does not match the ` +
+              "comparable evidence, exclusions, or required review flag"
+          );
+        }
+      } catch (error) {
+        errors.push(`${city.id}/${item.id}: ${error.message}`);
       }
     }
   }
@@ -167,10 +209,10 @@ export function validateData(data, schema, baseline) {
   addFormats(ajv);
   const validate = ajv.compile(schema);
   const valid = validate(data);
-  const errors = valid
-    ? []
-    : validate.errors.map((error) => `${error.instancePath || "$"} ${error.message}`);
-  return [...errors, ...validateSemantics(data, baseline)];
+  if (!valid) {
+    return validate.errors.map((error) => `${error.instancePath || "$"} ${error.message}`);
+  }
+  return validateSemantics(data, baseline);
 }
 
 function readJson(file) {

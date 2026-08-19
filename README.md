@@ -9,7 +9,7 @@ A public, client-side budget planner for a four-person household comparing [Jáv
 - `index.html`, `styles.css`, `app.js`, and `fx.js` form a static GitHub Pages site. Editing, totals, local persistence, reset, contingency, currency display, and JSON export all run in the browser.
 - `data/costs.v1.json` contains checked-in adopted defaults and source evidence. The page does not fetch third-party sites.
 - `data/exchange-rates.v1.json` is the validated EUR/USD fallback. The browser first attempts Frankfurter's CORS-enabled API, which republishes ECB reference rates without an API key, and explicitly labels whether the active rate is live, fallback, or stale.
-- `schema/cost-data.schema.json` plus `scripts/validate-data.mjs` reject malformed data, missing citations, invalid values, unknown model entities, inverted ranges, unsafe overlap, and implausible weekly changes.
+- `schema/cost-data.schema.json` plus `scripts/validate-data.mjs` reject malformed data, missing citations, invalid values, unknown model entities, inverted ranges, unsafe overlap, unexplained evidence exclusions, defaults below the highest comparable source, missing review flags, and implausible weekly changes.
 - GitHub-hosted automation researches or proposes updates to the checked-in JSON. Personal scenario values are never sent to GitHub.
 
 ## Local use
@@ -19,6 +19,7 @@ Node.js 22 or newer is recommended.
 ```bash
 npm ci
 npm test
+npm run apply:defaults
 npm run validate:data
 npm run validate:fx
 npx serve .
@@ -30,7 +31,13 @@ Open the local URL printed by `serve`. Opening `index.html` directly is not supp
 
 `.github/workflows/weekly-data-refresh.md` is the human-authored GitHub Agentic Workflow. Its compiled `.lock.yml` is the executable workflow. Every Sunday it may research only the explicitly allowlisted source hosts, edit only `data/costs.v1.json`, and produce at most one draft pull request. It cannot push directly to `main`.
 
-Deterministic post-steps run the test suite and compare the candidate with the exact trigger revision. Weekly changes above 15% for adopted defaults or 25% for normalized evidence are blocked. Failed, inaccessible, or ambiguous sources retain the last-known-good value. University living-at-home allowances cannot be added to household housing, food, or transport.
+Deterministic post-steps validate derived defaults, run the test suite, and compare the candidate with the exact trigger revision. Weekly changes above 15% for adopted defaults or 25% for normalized evidence are flagged for explicit review in the draft proposal. Failed, inaccessible, or ambiguous sources retain the last-known-good value. University living-at-home allowances cannot be added to household housing, food, or transport.
+
+## Default selection policy
+
+Each budget item classifies every citation as comparable or explicitly excluded with a reason. `npm run apply:defaults` selects the highest normalized value or range upper bound from the comparable set and records the selected source, complete comparison set, exclusions, and review flags in `defaultSelection`.
+
+The highest candidate is never reduced or automatically discarded. A sole comparable source is used and marked `single-source-low-confidence`. A uniquely highest source more than 25% above the next comparable source remains the default and is marked `singleton-outlier` for human review. The page shows these flags without changing user-edited values; **Reset this city** restores the current policy-derived defaults.
 
 The separate `Validate cost data` workflow runs on changes, manually, and every Sunday as a deterministic health check. It validates known-good data but does not claim to research new values.
 

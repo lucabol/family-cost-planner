@@ -79,59 +79,160 @@
       "items": [
         {
           "id": "housing",
-          "label": "Three-bedroom rent",
-          "defaultMonthly": 1300,
-          "notes": "A central planning value within the portal range; seasonal inventory can be materially higher.",
+          "label": "Three-bedroom apartment rent",
+          "defaultMonthly": 1500,
+          "notes": "Highest comparable apartment asking-rent upper bound; villa evidence is retained but excluded as a different housing type.",
           "evidence": [
             {
               "sourceId": "idealista-javea",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€1,100–€1,500" },
-              "monthlyNormalized": { "min": 1100, "max": 1500 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€1,100–€1,500"
+              },
+              "monthlyNormalized": {
+                "min": 1100,
+                "max": 1500
+              },
               "overlaps": [],
-              "notes": "Asking-rent range used as the primary default basis."
+              "notes": "Asking-rent range used as the primary default basis.",
+              "comparison": {
+                "status": "comparable"
+              }
             },
             {
               "sourceId": "welove-xabia",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "Villa: €1,800–€3,500" },
-              "monthlyNormalized": { "min": 1800, "max": 3500 },
-              "includedInDefault": false,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "Villa: €1,800–€3,500"
+              },
+              "monthlyNormalized": {
+                "min": 1800,
+                "max": 3500
+              },
               "overlaps": [],
-              "notes": "Villa guide retained as context but excluded from the adopted apartment-style default."
+              "notes": "Villa guide retained as context but excluded from the adopted apartment-style default.",
+              "comparison": {
+                "status": "excluded",
+                "reasonCode": "different-housing-type",
+                "reason": "Villa rent is a different housing type from the modeled three-bedroom apartment."
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "idealista-javea",
+            "selectedMonthlyValue": 1500,
+            "comparableCandidates": [
+              {
+                "sourceId": "idealista-javea",
+                "monthlyUpperBound": 1500
+              }
+            ],
+            "excludedEvidence": [
+              {
+                "sourceId": "welove-xabia",
+                "reasonCode": "different-housing-type",
+                "reason": "Villa rent is a different housing type from the modeled three-bedroom apartment."
+              }
+            ],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "idealista-javea",
+                "explanation": "Only idealista-javea provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "utilities-internet",
           "label": "Utilities + internet",
-          "defaultMonthly": 200,
-          "notes": "Editable midpoint-style allowance.",
+          "defaultMonthly": 250,
+          "notes": "Highest comparable upper bound from the cited local guide.",
           "evidence": [
             {
               "sourceId": "welove-xabia",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€150–€250" },
-              "monthlyNormalized": { "min": 150, "max": 250 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€150–€250"
+              },
+              "monthlyNormalized": {
+                "min": 150,
+                "max": 250
+              },
               "overlaps": [],
-              "notes": "Local guide range."
+              "notes": "Local guide range.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "welove-xabia",
+            "selectedMonthlyValue": 250,
+            "comparableCandidates": [
+              {
+                "sourceId": "welove-xabia",
+                "monthlyUpperBound": 250
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "welove-xabia",
+                "explanation": "Only welove-xabia provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "food",
           "label": "Food for four",
-          "defaultMonthly": 850,
-          "notes": "Household food only; no university living allowance is added separately.",
+          "defaultMonthly": 1039,
+          "notes": "Highest comparable upper bound for a four-person household; no university living allowance is added separately.",
           "evidence": [
             {
               "sourceId": "welove-xabia",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€693–€1,039" },
-              "monthlyNormalized": { "min": 693, "max": 1039 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€693–€1,039"
+              },
+              "monthlyNormalized": {
+                "min": 693,
+                "max": 1039
+              },
               "overlaps": [],
-              "notes": "Local guide range adopted for a four-person household."
+              "notes": "Local guide range adopted for a four-person household.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "welove-xabia",
+            "selectedMonthlyValue": 1039,
+            "comparableCandidates": [
+              {
+                "sourceId": "welove-xabia",
+                "monthlyUpperBound": 1039
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "welove-xabia",
+                "explanation": "Only welove-xabia provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "transport",
@@ -141,53 +242,151 @@
           "evidence": [
             {
               "sourceId": "numbeo-javea",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€150–€250" },
-              "monthlyNormalized": { "min": 150, "max": 250 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€150–€250"
+              },
+              "monthlyNormalized": {
+                "min": 150,
+                "max": 250
+              },
               "overlaps": [],
-              "notes": "Crowd-sourced range; the upper bound is adopted."
+              "notes": "Crowd-sourced range; the upper bound is adopted.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "numbeo-javea",
+            "selectedMonthlyValue": 250,
+            "comparableCandidates": [
+              {
+                "sourceId": "numbeo-javea",
+                "monthlyUpperBound": 250
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "numbeo-javea",
+                "explanation": "Only numbeo-javea provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "healthcare",
           "label": "Healthcare",
-          "defaultMonthly": 150,
-          "notes": "Private-cover planning allowance; eligible residents may use the public system.",
+          "defaultMonthly": 300,
+          "notes": "Highest comparable private-cover upper bound; eligible residents may use the public system.",
           "evidence": [
             {
               "sourceId": "numbeo-javea",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "Private cover: €120–€300" },
-              "monthlyNormalized": { "min": 120, "max": 300 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "Private cover: €120–€300"
+              },
+              "monthlyNormalized": {
+                "min": 120,
+                "max": 300
+              },
               "overlaps": [],
-              "notes": "Non-official private-cover estimate."
+              "notes": "Non-official private-cover estimate.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "numbeo-javea",
+            "selectedMonthlyValue": 300,
+            "comparableCandidates": [
+              {
+                "sourceId": "numbeo-javea",
+                "monthlyUpperBound": 300
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "numbeo-javea",
+                "explanation": "Only numbeo-javea provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "university-tuition",
           "label": "Public university tuition",
-          "defaultMonthly": 113,
-          "notes": "Annual public tuition normalized monthly; degree and exemptions change the exact amount.",
+          "defaultMonthly": 150,
+          "notes": "Highest comparable official public-tuition upper bound normalized monthly; exact tuition depends on degree and exemptions.",
           "evidence": [
             {
               "sourceId": "gva-fees",
-              "original": { "unit": "annual", "currency": "EUR", "value": "€900–€1,800/year" },
-              "monthlyNormalized": { "min": 75, "max": 150 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "annual",
+                "currency": "EUR",
+                "value": "€900–€1,800/year"
+              },
+              "monthlyNormalized": {
+                "min": 75,
+                "max": 150
+              },
               "overlaps": [],
-              "notes": "Official public-price range normalized over 12 months."
+              "notes": "Official public-price range normalized over 12 months.",
+              "comparison": {
+                "status": "comparable"
+              }
             },
             {
               "sourceId": "ua-calculator",
-              "original": { "unit": "qualitative", "currency": "EUR", "value": "Course-specific official calculator" },
-              "monthlyNormalized": { "value": 113 },
-              "includedInDefault": false,
+              "original": {
+                "unit": "qualitative",
+                "currency": "EUR",
+                "value": "Course-specific official calculator"
+              },
+              "monthlyNormalized": null,
               "overlaps": [],
-              "notes": "Use the calculator for an exact course load; the planner retains the adopted midpoint."
+              "notes": "Qualitative calculator reference retained for course-specific follow-up; excluded from numeric comparison.",
+              "comparison": {
+                "status": "excluded",
+                "reasonCode": "qualitative-only",
+                "reason": "The calculator citation has no reproducible monetary result for a specified course load in this dataset."
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "gva-fees",
+            "selectedMonthlyValue": 150,
+            "comparableCandidates": [
+              {
+                "sourceId": "gva-fees",
+                "monthlyUpperBound": 150
+              }
+            ],
+            "excludedEvidence": [
+              {
+                "sourceId": "ua-calculator",
+                "reasonCode": "qualitative-only",
+                "reason": "The calculator citation has no reproducible monetary result for a specified course load in this dataset."
+              }
+            ],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "gva-fees",
+                "explanation": "Only gva-fees provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "university-books",
@@ -197,29 +396,84 @@
           "evidence": [
             {
               "sourceId": "javea-planner-assumption",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€55 adopted assumption" },
-              "monthlyNormalized": { "value": 55 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€55 adopted assumption"
+              },
+              "monthlyNormalized": {
+                "value": 55
+              },
               "overlaps": [],
-              "notes": "Clearly labeled planning placeholder."
+              "notes": "Clearly labeled planning placeholder.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "javea-planner-assumption",
+            "selectedMonthlyValue": 55,
+            "comparableCandidates": [
+              {
+                "sourceId": "javea-planner-assumption",
+                "monthlyUpperBound": 55
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "javea-planner-assumption",
+                "explanation": "Only javea-planner-assumption provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "secondary-school",
           "label": "Public secondary school",
-          "defaultMonthly": 32,
+          "defaultMonthly": 41.67,
           "notes": "Public tuition excluded; allowance covers supplies and incidental costs, not meals.",
           "evidence": [
             {
               "sourceId": "javea-planner-assumption",
-              "original": { "unit": "annual", "currency": "EUR", "value": "€250–€500/year excluding meals" },
-              "monthlyNormalized": { "min": 20.83, "max": 41.67 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "annual",
+                "currency": "EUR",
+                "value": "€250–€500/year excluding meals"
+              },
+              "monthlyNormalized": {
+                "min": 20.83,
+                "max": 41.67
+              },
               "overlaps": [],
-              "notes": "Prototype planning range normalized over 12 months."
+              "notes": "Prototype planning range normalized over 12 months.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "javea-planner-assumption",
+            "selectedMonthlyValue": 41.67,
+            "comparableCandidates": [
+              {
+                "sourceId": "javea-planner-assumption",
+                "monthlyUpperBound": 41.67
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "javea-planner-assumption",
+                "explanation": "Only javea-planner-assumption provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "other-household",
@@ -229,13 +483,40 @@
           "evidence": [
             {
               "sourceId": "javea-planner-assumption",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€500 adopted assumption" },
-              "monthlyNormalized": { "value": 500 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€500 adopted assumption"
+              },
+              "monthlyNormalized": {
+                "value": 500
+              },
               "overlaps": [],
-              "notes": "Editable planning placeholder rather than an observed market statistic."
+              "notes": "Editable planning placeholder rather than an observed market statistic.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "javea-planner-assumption",
+            "selectedMonthlyValue": 500,
+            "comparableCandidates": [
+              {
+                "sourceId": "javea-planner-assumption",
+                "monthlyUpperBound": 500
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "javea-planner-assumption",
+                "explanation": "Only javea-planner-assumption provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         }
       ]
     },
@@ -311,90 +592,222 @@
         {
           "id": "housing",
           "label": "Three-bedroom rent",
-          "defaultMonthly": 1000,
-          "notes": "Portal range adopted as the primary basis.",
+          "defaultMonthly": 1100,
+          "notes": "Highest comparable upper bound across the cited rental estimates.",
           "evidence": [
             {
               "sourceId": "immobiliare-savona",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€900–€1,100" },
-              "monthlyNormalized": { "min": 900, "max": 1100 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€900–€1,100"
+              },
+              "monthlyNormalized": {
+                "min": 900,
+                "max": 1100
+              },
               "overlaps": [],
-              "notes": "Asking-rent range."
+              "notes": "Asking-rent range.",
+              "comparison": {
+                "status": "comparable"
+              }
             },
             {
               "sourceId": "livingcost-savona",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€780–€920" },
-              "monthlyNormalized": { "min": 780, "max": 920 },
-              "includedInDefault": false,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€780–€920"
+              },
+              "monthlyNormalized": {
+                "min": 780,
+                "max": 920
+              },
               "overlaps": [],
-              "notes": "Lower-reliability comparison retained as context."
+              "notes": "Lower-reliability comparison retained as context.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "immobiliare-savona",
+            "selectedMonthlyValue": 1100,
+            "comparableCandidates": [
+              {
+                "sourceId": "immobiliare-savona",
+                "monthlyUpperBound": 1100
+              },
+              {
+                "sourceId": "livingcost-savona",
+                "monthlyUpperBound": 920
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": []
+          }
         },
         {
           "id": "utilities-internet",
           "label": "Utilities + internet",
-          "defaultMonthly": 188,
-          "notes": "Upper-middle planning value across lower-reliability estimates.",
+          "defaultMonthly": 190,
+          "notes": "Highest comparable upper bound across the cited estimates.",
           "evidence": [
             {
               "sourceId": "livingcost-savona",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€175–€185" },
-              "monthlyNormalized": { "min": 175, "max": 185 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€175–€185"
+              },
+              "monthlyNormalized": {
+                "min": 175,
+                "max": 185
+              },
               "overlaps": [],
-              "notes": "Modeled estimate."
+              "notes": "Modeled estimate.",
+              "comparison": {
+                "status": "comparable"
+              }
             },
             {
               "sourceId": "numbeo-savona",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€175–€190" },
-              "monthlyNormalized": { "min": 175, "max": 190 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€175–€190"
+              },
+              "monthlyNormalized": {
+                "min": 175,
+                "max": 190
+              },
               "overlaps": [],
-              "notes": "Crowd-sourced comparison."
+              "notes": "Crowd-sourced comparison.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "numbeo-savona",
+            "selectedMonthlyValue": 190,
+            "comparableCandidates": [
+              {
+                "sourceId": "numbeo-savona",
+                "monthlyUpperBound": 190
+              },
+              {
+                "sourceId": "livingcost-savona",
+                "monthlyUpperBound": 185
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": []
+          }
         },
         {
           "id": "food",
           "label": "Food for four",
-          "defaultMonthly": 1325,
-          "notes": "Conservative adopted allowance below modeled estimates; edit for household habits.",
+          "defaultMonthly": 1460,
+          "notes": "Highest comparable upper bound across the cited household-food estimates.",
           "evidence": [
             {
               "sourceId": "livingcost-savona",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "≈€1,425" },
-              "monthlyNormalized": { "value": 1425 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "≈€1,425"
+              },
+              "monthlyNormalized": {
+                "value": 1425
+              },
               "overlaps": [],
-              "notes": "Modeled estimate retained with lower-reliability label."
+              "notes": "Modeled estimate retained with lower-reliability label.",
+              "comparison": {
+                "status": "comparable"
+              }
             },
             {
               "sourceId": "numbeo-savona",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€1,425–€1,460" },
-              "monthlyNormalized": { "min": 1425, "max": 1460 },
-              "includedInDefault": false,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€1,425–€1,460"
+              },
+              "monthlyNormalized": {
+                "min": 1425,
+                "max": 1460
+              },
               "overlaps": [],
-              "notes": "Crowd-sourced comparison."
+              "notes": "Crowd-sourced comparison.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "numbeo-savona",
+            "selectedMonthlyValue": 1460,
+            "comparableCandidates": [
+              {
+                "sourceId": "numbeo-savona",
+                "monthlyUpperBound": 1460
+              },
+              {
+                "sourceId": "livingcost-savona",
+                "monthlyUpperBound": 1425
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": []
+          }
         },
         {
           "id": "transport",
           "label": "Transport",
-          "defaultMonthly": 145,
-          "notes": "Local public and incidental transport allowance.",
+          "defaultMonthly": 115,
+          "notes": "Highest comparable upper bound from the cited modeled estimate.",
           "evidence": [
             {
               "sourceId": "livingcost-savona",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€100–€115" },
-              "monthlyNormalized": { "min": 100, "max": 115 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€100–€115"
+              },
+              "monthlyNormalized": {
+                "min": 100,
+                "max": 115
+              },
               "overlaps": [],
-              "notes": "Modeled estimate; adopted default includes extra flexibility."
+              "notes": "Modeled estimate; its normalized upper bound is selected.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "livingcost-savona",
+            "selectedMonthlyValue": 115,
+            "comparableCandidates": [
+              {
+                "sourceId": "livingcost-savona",
+                "monthlyUpperBound": 115
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "livingcost-savona",
+                "explanation": "Only livingcost-savona provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "healthcare",
@@ -404,37 +817,106 @@
           "evidence": [
             {
               "sourceId": "savona-planner-assumption",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€100 adopted assumption" },
-              "monthlyNormalized": { "value": 100 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€100 adopted assumption"
+              },
+              "monthlyNormalized": {
+                "value": 100
+              },
               "overlaps": [],
-              "notes": "Planning placeholder; SSN eligibility and out-of-pocket needs vary."
+              "notes": "Planning placeholder; SSN eligibility and out-of-pocket needs vary.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "savona-planner-assumption",
+            "selectedMonthlyValue": 100,
+            "comparableCandidates": [
+              {
+                "sourceId": "savona-planner-assumption",
+                "monthlyUpperBound": 100
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "savona-planner-assumption",
+                "explanation": "Only savona-planner-assumption provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "university-tuition",
           "label": "Public university tuition",
-          "defaultMonthly": 149,
-          "notes": "ISEE-based annual charge normalized monthly.",
+          "defaultMonthly": 286.33,
+          "notes": "Highest comparable official ISEE-based tuition upper bound normalized monthly.",
           "evidence": [
             {
               "sourceId": "unige-fees",
-              "original": { "unit": "annual", "currency": "EUR", "value": "€136–€3,436/year" },
-              "monthlyNormalized": { "min": 11.33, "max": 286.33 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "annual",
+                "currency": "EUR",
+                "value": "€136–€3,436/year"
+              },
+              "monthlyNormalized": {
+                "min": 11.33,
+                "max": 286.33
+              },
               "overlaps": [],
-              "notes": "Official range; adopted default assumes a mid-range ISEE outcome."
+              "notes": "Official range normalized over 12 months; its upper bound is selected.",
+              "comparison": {
+                "status": "comparable"
+              }
             },
             {
               "sourceId": "unige-isee",
-              "original": { "unit": "qualitative", "currency": "EUR", "value": "ISEE determines contribution" },
-              "monthlyNormalized": { "value": 149 },
-              "includedInDefault": false,
+              "original": {
+                "unit": "qualitative",
+                "currency": "EUR",
+                "value": "ISEE determines contribution"
+              },
+              "monthlyNormalized": null,
               "overlaps": [],
-              "notes": "Official assessment guidance supporting the adopted planning point."
+              "notes": "Official assessment guidance retained as qualitative context and excluded from numeric comparison.",
+              "comparison": {
+                "status": "excluded",
+                "reasonCode": "qualitative-only",
+                "reason": "ISEE guidance explains assessment rules but does not provide a standalone monetary observation."
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "unige-fees",
+            "selectedMonthlyValue": 286.33,
+            "comparableCandidates": [
+              {
+                "sourceId": "unige-fees",
+                "monthlyUpperBound": 286.33
+              }
+            ],
+            "excludedEvidence": [
+              {
+                "sourceId": "unige-isee",
+                "reasonCode": "qualitative-only",
+                "reason": "ISEE guidance explains assessment rules but does not provide a standalone monetary observation."
+              }
+            ],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "unige-fees",
+                "explanation": "Only unige-fees provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "university-books",
@@ -444,29 +926,84 @@
           "evidence": [
             {
               "sourceId": "savona-planner-assumption",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€55 adopted assumption" },
-              "monthlyNormalized": { "value": 55 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€55 adopted assumption"
+              },
+              "monthlyNormalized": {
+                "value": 55
+              },
               "overlaps": [],
-              "notes": "Clearly labeled planning placeholder."
+              "notes": "Clearly labeled planning placeholder.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "savona-planner-assumption",
+            "selectedMonthlyValue": 55,
+            "comparableCandidates": [
+              {
+                "sourceId": "savona-planner-assumption",
+                "monthlyUpperBound": 55
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "savona-planner-assumption",
+                "explanation": "Only savona-planner-assumption provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "secondary-school",
           "label": "Public secondary school",
-          "defaultMonthly": 32,
+          "defaultMonthly": 41.67,
           "notes": "Public tuition excluded; supplies and incidental costs only.",
           "evidence": [
             {
               "sourceId": "savona-planner-assumption",
-              "original": { "unit": "annual", "currency": "EUR", "value": "€250–€500/year" },
-              "monthlyNormalized": { "min": 20.83, "max": 41.67 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "annual",
+                "currency": "EUR",
+                "value": "€250–€500/year"
+              },
+              "monthlyNormalized": {
+                "min": 20.83,
+                "max": 41.67
+              },
               "overlaps": [],
-              "notes": "Prototype planning range normalized over 12 months."
+              "notes": "Prototype planning range normalized over 12 months.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "savona-planner-assumption",
+            "selectedMonthlyValue": 41.67,
+            "comparableCandidates": [
+              {
+                "sourceId": "savona-planner-assumption",
+                "monthlyUpperBound": 41.67
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "savona-planner-assumption",
+                "explanation": "Only savona-planner-assumption provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "other-household",
@@ -476,13 +1013,40 @@
           "evidence": [
             {
               "sourceId": "savona-planner-assumption",
-              "original": { "unit": "monthly", "currency": "EUR", "value": "€450 adopted assumption" },
-              "monthlyNormalized": { "value": 450 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "EUR",
+                "value": "€450 adopted assumption"
+              },
+              "monthlyNormalized": {
+                "value": 450
+              },
               "overlaps": [],
-              "notes": "Editable planning placeholder rather than an observed market statistic."
+              "notes": "Editable planning placeholder rather than an observed market statistic.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "savona-planner-assumption",
+            "selectedMonthlyValue": 450,
+            "comparableCandidates": [
+              {
+                "sourceId": "savona-planner-assumption",
+                "monthlyUpperBound": 450
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "savona-planner-assumption",
+                "explanation": "Only savona-planner-assumption provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         }
       ]
     },
@@ -548,26 +1112,68 @@
         {
           "id": "housing",
           "label": "Housing",
-          "defaultMonthly": 2850,
-          "notes": "Uses the low end of the HUD range; UW living-at-home housing allowance is excluded.",
+          "defaultMonthly": 4910,
+          "notes": "Highest comparable housing upper bound; the singleton HUD high value remains selected and is flagged for human review.",
           "evidence": [
             {
               "sourceId": "mit-king-county",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$2,571" },
-              "monthlyNormalized": { "value": 2571 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$2,571"
+              },
+              "monthlyNormalized": {
+                "value": 2571
+              },
               "overlaps": [],
-              "notes": "MIT household housing component."
+              "notes": "MIT household housing component.",
+              "comparison": {
+                "status": "comparable"
+              }
             },
             {
               "sourceId": "hud-fmr",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$2,850–$4,910" },
-              "monthlyNormalized": { "min": 2850, "max": 4910 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$2,850–$4,910"
+              },
+              "monthlyNormalized": {
+                "min": 2850,
+                "max": 4910
+              },
               "overlaps": [],
-              "notes": "Official FMR benchmark range retained alongside MIT."
+              "notes": "Official FMR benchmark range retained alongside MIT.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "hud-fmr",
+            "selectedMonthlyValue": 4910,
+            "comparableCandidates": [
+              {
+                "sourceId": "hud-fmr",
+                "monthlyUpperBound": 4910
+              },
+              {
+                "sourceId": "mit-king-county",
+                "monthlyUpperBound": 2571
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "singleton-outlier",
+                "sourceId": "hud-fmr",
+                "gapPercent": 90.97627382341501,
+                "nextHighestMonthly": 2571,
+                "explanation": "hud-fmr is 90.98% above the next-highest comparable source and remains selected under policy."
+              }
+            ]
+          }
         },
         {
           "id": "food",
@@ -577,13 +1183,40 @@
           "evidence": [
             {
               "sourceId": "mit-king-county",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$1,277" },
-              "monthlyNormalized": { "value": 1277 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$1,277"
+              },
+              "monthlyNormalized": {
+                "value": 1277
+              },
               "overlaps": [],
-              "notes": "Household-level food estimate."
+              "notes": "Household-level food estimate.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "mit-king-county",
+            "selectedMonthlyValue": 1277,
+            "comparableCandidates": [
+              {
+                "sourceId": "mit-king-county",
+                "monthlyUpperBound": 1277
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "mit-king-county",
+                "explanation": "Only mit-king-county provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "healthcare",
@@ -593,13 +1226,40 @@
           "evidence": [
             {
               "sourceId": "mit-king-county",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$895" },
-              "monthlyNormalized": { "value": 895 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$895"
+              },
+              "monthlyNormalized": {
+                "value": 895
+              },
               "overlaps": [],
-              "notes": "Household-level healthcare estimate."
+              "notes": "Household-level healthcare estimate.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "mit-king-county",
+            "selectedMonthlyValue": 895,
+            "comparableCandidates": [
+              {
+                "sourceId": "mit-king-county",
+                "monthlyUpperBound": 895
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "mit-king-county",
+                "explanation": "Only mit-king-county provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "transport",
@@ -609,13 +1269,40 @@
           "evidence": [
             {
               "sourceId": "mit-king-county",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$1,180" },
-              "monthlyNormalized": { "value": 1180 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$1,180"
+              },
+              "monthlyNormalized": {
+                "value": 1180
+              },
               "overlaps": [],
-              "notes": "Household-level transport estimate."
+              "notes": "Household-level transport estimate.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "mit-king-county",
+            "selectedMonthlyValue": 1180,
+            "comparableCandidates": [
+              {
+                "sourceId": "mit-king-county",
+                "monthlyUpperBound": 1180
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "mit-king-county",
+                "explanation": "Only mit-king-county provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "civic-participation",
@@ -625,13 +1312,40 @@
           "evidence": [
             {
               "sourceId": "mit-king-county",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$819" },
-              "monthlyNormalized": { "value": 819 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$819"
+              },
+              "monthlyNormalized": {
+                "value": 819
+              },
               "overlaps": [],
-              "notes": "Household-level civic participation estimate."
+              "notes": "Household-level civic participation estimate.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "mit-king-county",
+            "selectedMonthlyValue": 819,
+            "comparableCandidates": [
+              {
+                "sourceId": "mit-king-county",
+                "monthlyUpperBound": 819
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "mit-king-county",
+                "explanation": "Only mit-king-county provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "internet-mobile",
@@ -641,13 +1355,40 @@
           "evidence": [
             {
               "sourceId": "mit-king-county",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$252" },
-              "monthlyNormalized": { "value": 252 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$252"
+              },
+              "monthlyNormalized": {
+                "value": 252
+              },
               "overlaps": [],
-              "notes": "Household-level connectivity estimate."
+              "notes": "Household-level connectivity estimate.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "mit-king-county",
+            "selectedMonthlyValue": 252,
+            "comparableCandidates": [
+              {
+                "sourceId": "mit-king-county",
+                "monthlyUpperBound": 252
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "mit-king-county",
+                "explanation": "Only mit-king-county provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "other-household",
@@ -657,29 +1398,83 @@
           "evidence": [
             {
               "sourceId": "mit-king-county",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$900" },
-              "monthlyNormalized": { "value": 900 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$900"
+              },
+              "monthlyNormalized": {
+                "value": 900
+              },
               "overlaps": [],
-              "notes": "Household-level other necessities estimate."
+              "notes": "Household-level other necessities estimate.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "mit-king-county",
+            "selectedMonthlyValue": 900,
+            "comparableCandidates": [
+              {
+                "sourceId": "mit-king-county",
+                "monthlyUpperBound": 900
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "mit-king-county",
+                "explanation": "Only mit-king-county provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "university-tuition",
           "label": "University tuition + fees",
-          "defaultMonthly": 1117,
+          "defaultMonthly": 1117.17,
           "notes": "Official annual tuition and fees normalized monthly.",
           "evidence": [
             {
               "sourceId": "uw-coa",
-              "original": { "unit": "annual", "currency": "USD", "value": "$13,406/year" },
-              "monthlyNormalized": { "value": 1117.17 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "annual",
+                "currency": "USD",
+                "value": "$13,406/year"
+              },
+              "monthlyNormalized": {
+                "value": 1117.17
+              },
               "overlaps": [],
-              "notes": "Tuition and required fees only; no living allowance is included."
+              "notes": "Tuition and required fees only; no living allowance is included.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "uw-coa",
+            "selectedMonthlyValue": 1117.17,
+            "comparableCandidates": [
+              {
+                "sourceId": "uw-coa",
+                "monthlyUpperBound": 1117.17
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "uw-coa",
+                "explanation": "Only uw-coa provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "university-books",
@@ -689,13 +1484,40 @@
           "evidence": [
             {
               "sourceId": "uw-coa",
-              "original": { "unit": "annual", "currency": "USD", "value": "$900/year" },
-              "monthlyNormalized": { "value": 75 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "annual",
+                "currency": "USD",
+                "value": "$900/year"
+              },
+              "monthlyNormalized": {
+                "value": 75
+              },
               "overlaps": [],
-              "notes": "Books and materials only."
+              "notes": "Books and materials only.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "uw-coa",
+            "selectedMonthlyValue": 75,
+            "comparableCandidates": [
+              {
+                "sourceId": "uw-coa",
+                "monthlyUpperBound": 75
+              }
+            ],
+            "excludedEvidence": [],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "uw-coa",
+                "explanation": "Only uw-coa provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         },
         {
           "id": "secondary-school",
@@ -705,21 +1527,62 @@
           "evidence": [
             {
               "sourceId": "seattle-schools",
-              "original": { "unit": "qualitative", "currency": "NONE", "value": "No public-school tuition; supplies vary" },
-              "monthlyNormalized": { "value": 0 },
-              "includedInDefault": false,
+              "original": {
+                "unit": "qualitative",
+                "currency": "NONE",
+                "value": "No public-school tuition; supplies vary"
+              },
+              "monthlyNormalized": null,
               "overlaps": [],
-              "notes": "Official district basis for zero tuition."
+              "notes": "Official district basis for zero tuition.",
+              "comparison": {
+                "status": "excluded",
+                "reasonCode": "partial-item-coverage",
+                "reason": "The district citation establishes zero tuition but does not quantify the modeled supplies and activities allowance."
+              }
             },
             {
               "sourceId": "seattle-planner-assumption",
-              "original": { "unit": "monthly", "currency": "USD", "value": "$50 adopted supply allowance" },
-              "monthlyNormalized": { "value": 50 },
-              "includedInDefault": true,
+              "original": {
+                "unit": "monthly",
+                "currency": "USD",
+                "value": "$50 adopted supply allowance"
+              },
+              "monthlyNormalized": {
+                "value": 50
+              },
               "overlaps": [],
-              "notes": "Editable planning placeholder for supplies and activities."
+              "notes": "Editable planning placeholder for supplies and activities.",
+              "comparison": {
+                "status": "comparable"
+              }
             }
-          ]
+          ],
+          "defaultSelection": {
+            "policy": "highest-comparable-upper-bound",
+            "selectedSourceId": "seattle-planner-assumption",
+            "selectedMonthlyValue": 50,
+            "comparableCandidates": [
+              {
+                "sourceId": "seattle-planner-assumption",
+                "monthlyUpperBound": 50
+              }
+            ],
+            "excludedEvidence": [
+              {
+                "sourceId": "seattle-schools",
+                "reasonCode": "partial-item-coverage",
+                "reason": "The district citation establishes zero tuition but does not quantify the modeled supplies and activities allowance."
+              }
+            ],
+            "reviewFlags": [
+              {
+                "code": "single-source-low-confidence",
+                "sourceId": "seattle-planner-assumption",
+                "explanation": "Only seattle-planner-assumption provides comparable normalized evidence for this item."
+              }
+            ]
+          }
         }
       ]
     }

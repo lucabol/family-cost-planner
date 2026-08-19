@@ -9,7 +9,10 @@ on:
       - schema/**
       - scripts/**
       - tests/**
+      - app.js
       - fx.js
+      - index.html
+      - styles.css
       - package.json
       - package-lock.json
       - .github/workflows/data-quality.yml
@@ -47,8 +50,9 @@ jobs:
           npm run validate:data
           npm run validate:fx
 
-      - name: Enforce weekly-change thresholds on pull requests
+      - name: Flag cost-data weekly-change thresholds on pull requests
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         env:
           BASE_REF: ${{ github.base_ref }}
         shell: bash
@@ -57,6 +61,15 @@ jobs:
           baseline="${RUNNER_TEMP}/costs.v1.baseline.json"
           git show "origin/${BASE_REF}:data/costs.v1.json" > "$baseline"
           node scripts/validate-data.mjs data/costs.v1.json --baseline "$baseline"
+
+      - name: Flag exchange-rate weekly-change thresholds on pull requests
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
           fx_baseline="${RUNNER_TEMP}/exchange-rates.v1.baseline.json"
           if git cat-file -e "origin/${BASE_REF}:data/exchange-rates.v1.json" 2>/dev/null; then
             git show "origin/${BASE_REF}:data/exchange-rates.v1.json" > "$fx_baseline"

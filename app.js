@@ -155,6 +155,7 @@ function escapeHtml(value) {
 
 function monthlyRange(evidence, currentCity) {
   const normalized = evidence.monthlyNormalized;
+  if (normalized === null) return "not numerically comparable";
   if ("value" in normalized) return formatMoney(normalized.value, currentCity);
   return `${formatMoney(normalized.min, currentCity)}–${formatMoney(normalized.max, currentCity)}`;
 }
@@ -166,6 +167,37 @@ function currencySymbol(currentCity = city()) {
 function inputValue(value, currentCity = city()) {
   const displayed = amountForDisplay(value, currentCity);
   return Number.isInteger(displayed) ? displayed : displayed.toFixed(2);
+}
+
+function defaultReviewBadge(item, sources) {
+  const flag = item.defaultSelection.reviewFlags[0];
+  if (!flag) return "";
+
+  const selectedSource = sources.get(flag.sourceId);
+  if (flag.code === "singleton-outlier") {
+    const nextCandidate = item.defaultSelection.comparableCandidates[1];
+    const nextSource = sources.get(nextCandidate.sourceId);
+    const gapLabel =
+      flag.gapPercent === null ? "no non-zero comparison" : `${flag.gapPercent.toFixed(0)}% gap`;
+    const explanation =
+      flag.gapPercent === null
+        ? `${selectedSource.name} is the only non-zero comparable source. Its highest value remains selected and requires human review.`
+        : `${selectedSource.name} is ${flag.gapPercent.toFixed(2)}% above ${nextSource.name}. Its highest value remains selected and requires human review.`;
+    return `<span class="default-review-flag outlier" title="${escapeHtml(explanation)}">
+      <span class="flag-mark" aria-hidden="true">!</span>
+      <span>Review · ${escapeHtml(gapLabel)}</span>
+      <span class="sr-only">. ${escapeHtml(explanation)}</span>
+    </span>`;
+  }
+
+  const explanation =
+    `Only ${selectedSource.name} provides comparable normalized evidence. ` +
+    "Its highest value is used with low confidence.";
+  return `<span class="default-review-flag single-source" title="${escapeHtml(explanation)}">
+    <span class="flag-mark" aria-hidden="true">i</span>
+    <span>1 source</span>
+    <span class="sr-only">. ${escapeHtml(explanation)}</span>
+  </span>`;
 }
 
 function persist(values, contingency) {
@@ -225,30 +257,40 @@ function renderRows() {
 
   elements.budgetRows.innerHTML = currentCity.items
     .map((item) => {
-      const primaryEvidence =
-        item.evidence.find((evidence) => evidence.includedInDefault) ?? item.evidence[0];
+      const primaryEvidence = item.evidence.find(
+        (evidence) => evidence.sourceId === item.defaultSelection.selectedSourceId
+      );
       const primarySource = sources.get(primaryEvidence.sourceId);
       const evidenceDetails = item.evidence
         .map((evidence) => {
           const source = sources.get(evidence.sourceId);
-          const excluded = evidence.includedInDefault ? "" : " · context only";
+          const comparison =
+            evidence.comparison.status === "excluded"
+              ? ` · excluded from comparison: ${evidence.comparison.reason}`
+              : evidence.sourceId === item.defaultSelection.selectedSourceId
+                ? " · selected highest comparable upper bound"
+                : " · included in comparison";
           return `<li><a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">` +
-            `${escapeHtml(source.name)}</a>: ${escapeHtml(evidence.original.value)} ` +
-            `(normalized ${escapeHtml(monthlyRange(evidence, currentCity))}${excluded}). ` +
+            `${escapeHtml(source.name)}</a> <span class="evidence-reliability">` +
+            `${escapeHtml(source.reliability)}</span>: ${escapeHtml(evidence.original.value)} ` +
+            `(normalized ${escapeHtml(monthlyRange(evidence, currentCity))}${escapeHtml(comparison)}). ` +
             `${escapeHtml(evidence.notes)}</li>`;
         })
         .join("");
       return `<tr class="${state.showAllEvidence ? "expanded" : ""}">
         <th scope="row">${escapeHtml(item.label)}<small>${escapeHtml(item.notes)}</small></th>
-        <td class="default-value">${escapeHtml(formatMoney(item.defaultMonthly, currentCity))}</td>
-        <td class="basis-cell">
+        <td class="default-value" data-label="Adopted default">
+          <span class="default-amount">${escapeHtml(formatMoney(item.defaultMonthly, currentCity))}</span>
+          ${defaultReviewBadge(item, sources)}
+        </td>
+        <td class="basis-cell" data-label="Evidence basis">
           <div class="evidence-summary">
             <strong>${escapeHtml(monthlyRange(primaryEvidence, currentCity))}</strong>
-            <span>via ${escapeHtml(primarySource.name)}</span>
+            <span>via <a href="${escapeHtml(primarySource.url)}" target="_blank" rel="noreferrer">${escapeHtml(primarySource.name)}</a></span>
           </div>
           <ul class="evidence-detail">${evidenceDetails}</ul>
         </td>
-        <td class="edit-cell">
+        <td class="edit-cell" data-label="Your monthly input">
           <label class="currency-input">
             <span>${escapeHtml(currencySymbol(currentCity))}</span>
             <input data-budget-input data-item="${escapeHtml(item.id)}" type="number" min="0" step="0.01"

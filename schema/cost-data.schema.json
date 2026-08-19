@@ -69,11 +69,12 @@
     "item": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "defaultMonthly", "notes", "evidence"],
+      "required": ["id", "label", "defaultMonthly", "defaultSelection", "notes", "evidence"],
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
         "label": { "type": "string", "minLength": 1 },
         "defaultMonthly": { "type": "number", "minimum": 0 },
+        "defaultSelection": { "$ref": "#/$defs/defaultSelection" },
         "notes": { "type": "string", "minLength": 1 },
         "evidence": {
           "type": "array",
@@ -85,7 +86,7 @@
     "evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["sourceId", "original", "monthlyNormalized", "includedInDefault", "overlaps", "notes"],
+      "required": ["sourceId", "original", "monthlyNormalized", "comparison", "overlaps", "notes"],
       "properties": {
         "sourceId": { "type": "string", "minLength": 1 },
         "original": {
@@ -100,6 +101,9 @@
         },
         "monthlyNormalized": {
           "oneOf": [
+            {
+              "type": "null"
+            },
             {
               "type": "object",
               "additionalProperties": false,
@@ -117,7 +121,39 @@
             }
           ]
         },
-        "includedInDefault": { "type": "boolean" },
+        "comparison": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status"],
+              "properties": {
+                "status": { "const": "comparable" }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status", "reasonCode", "reason"],
+              "properties": {
+                "status": { "const": "excluded" },
+                "reasonCode": {
+                  "enum": [
+                    "wrong-household-size",
+                    "overlapping-bundle",
+                    "different-housing-type",
+                    "different-item-scope",
+                    "qualitative-only",
+                    "missing-normalization",
+                    "partial-item-coverage",
+                    "other"
+                  ]
+                },
+                "reason": { "type": "string", "minLength": 1 }
+              }
+            }
+          ]
+        },
         "overlaps": {
           "type": "array",
           "uniqueItems": true,
@@ -126,6 +162,99 @@
           }
         },
         "notes": { "type": "string", "minLength": 1 }
+      }
+    },
+    "defaultSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "selectedSourceId",
+        "selectedMonthlyValue",
+        "comparableCandidates",
+        "excludedEvidence",
+        "reviewFlags"
+      ],
+      "properties": {
+        "policy": { "const": "highest-comparable-upper-bound" },
+        "selectedSourceId": { "type": "string", "minLength": 1 },
+        "selectedMonthlyValue": { "type": "number", "minimum": 0 },
+        "comparableCandidates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sourceId", "monthlyUpperBound"],
+            "properties": {
+              "sourceId": { "type": "string", "minLength": 1 },
+              "monthlyUpperBound": { "type": "number", "minimum": 0 }
+            }
+          }
+        },
+        "excludedEvidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sourceId", "reasonCode", "reason"],
+            "properties": {
+              "sourceId": { "type": "string", "minLength": 1 },
+              "reasonCode": {
+                "enum": [
+                  "wrong-household-size",
+                  "overlapping-bundle",
+                  "different-housing-type",
+                  "different-item-scope",
+                  "qualitative-only",
+                  "missing-normalization",
+                  "partial-item-coverage",
+                  "other"
+                ]
+              },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "reviewFlags": {
+          "type": "array",
+          "maxItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["code", "sourceId", "explanation"],
+                "properties": {
+                  "code": { "const": "single-source-low-confidence" },
+                  "sourceId": { "type": "string", "minLength": 1 },
+                  "explanation": { "type": "string", "minLength": 1 }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code",
+                  "sourceId",
+                  "gapPercent",
+                  "nextHighestMonthly",
+                  "explanation"
+                ],
+                "properties": {
+                  "code": { "const": "singleton-outlier" },
+                  "sourceId": { "type": "string", "minLength": 1 },
+                  "gapPercent": {
+                    "type": ["number", "null"],
+                    "exclusiveMinimum": 25
+                  },
+                  "nextHighestMonthly": { "type": "number", "minimum": 0 },
+                  "explanation": { "type": "string", "minLength": 1 }
+                }
+              }
+            ]
+          }
+        }
       }
     }
   }
