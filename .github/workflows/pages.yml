@@ -8,6 +8,7 @@ on:
       - styles.css
       - app.js
       - fx.js
+      - favicon.svg
       - data/**
       - schema/**
       - .github/workflows/pages.yml
@@ -40,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir _site
-          cp index.html styles.css app.js fx.js _site/
+          cp index.html styles.css app.js fx.js favicon.svg _site/
           cp -R data schema _site/
           touch _site/.nojekyll
 
