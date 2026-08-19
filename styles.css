@@ -354,7 +354,7 @@ button.primary:hover { background: var(--cp-accent-hover); }
   margin: 4px 0 2px;
   font-size: clamp(2rem, 4vw, 3.4rem);
   line-height: 1;
-  letter-spacing: -.04em;
+  letter-spacing: 0;
 }
 
 .summary-details {
