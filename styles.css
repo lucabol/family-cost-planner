@@ -190,11 +190,18 @@ p { line-height: 1.58; }
 .loading-state p,
 .error-state p { color: var(--cp-text-muted); }
 
+.planner-controls {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 20px;
+}
+
 .city-tabs {
   display: flex;
   gap: 4px;
   overflow-x: auto;
-  padding: 20px 0 0;
   scrollbar-width: thin;
 }
 
@@ -228,6 +235,72 @@ button.primary:hover { background: var(--cp-accent-hover); }
   background: var(--cp-accent-soft);
   color: var(--cp-accent);
 }
+
+.currency-control {
+  flex: 0 0 auto;
+  max-width: 430px;
+  padding-bottom: 5px;
+}
+
+.currency-control-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.currency-control-row > span {
+  color: var(--cp-text-muted);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.segmented-control {
+  display: inline-grid;
+  grid-template-columns: repeat(2, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--cp-border-strong);
+  border-radius: .625rem;
+  background: var(--cp-surface);
+}
+
+.segmented-control button {
+  min-height: 32px;
+  border: 0;
+  border-radius: 0;
+  padding: 5px 11px;
+  font-size: .78rem;
+}
+
+.segmented-control button + button {
+  border-inline-start: 1px solid var(--cp-border-strong);
+}
+
+.segmented-control button[aria-pressed="true"] {
+  background: var(--cp-accent);
+  color: var(--cp-accent-fg);
+}
+
+.segmented-control button:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+#exchangeRateStatus {
+  margin: 5px 0 0;
+  color: var(--cp-text-muted);
+  font-size: .72rem;
+  line-height: 1.35;
+  text-align: end;
+}
+
+.fx-state {
+  color: var(--cp-success);
+  font-weight: 750;
+}
+
+.fx-state.fallback { color: var(--cp-warning); }
+.fx-state.stale { color: var(--cp-danger); }
 
 .city-brief {
   display: flex;
@@ -547,6 +620,10 @@ footer p {
   .source-row { grid-template-columns: 1fr auto; }
   .source-notes { grid-column: 1 / -1; }
   .method-note { grid-template-columns: 1fr; gap: 8px; }
+  .planner-controls { align-items: stretch; flex-direction: column; gap: 12px; }
+  .currency-control { max-width: none; padding-bottom: 0; }
+  .currency-control-row { justify-content: flex-start; }
+  #exchangeRateStatus { text-align: start; }
 }
 
 @media (max-width: 640px) {

@@ -6,8 +6,9 @@ A public, client-side budget planner for a four-person household comparing [Jáv
 
 ## Architecture
 
-- `index.html`, `styles.css`, and `app.js` form a static GitHub Pages site. Editing, totals, local persistence, reset, contingency, and JSON export all run in the browser.
+- `index.html`, `styles.css`, `app.js`, and `fx.js` form a static GitHub Pages site. Editing, totals, local persistence, reset, contingency, currency display, and JSON export all run in the browser.
 - `data/costs.v1.json` contains checked-in adopted defaults and source evidence. The page does not fetch third-party sites.
+- `data/exchange-rates.v1.json` is the validated EUR/USD fallback. The browser first attempts Frankfurter's CORS-enabled API, which republishes ECB reference rates without an API key, and explicitly labels whether the active rate is live, fallback, or stale.
 - `schema/cost-data.schema.json` plus `scripts/validate-data.mjs` reject malformed data, missing citations, invalid values, unknown model entities, inverted ranges, unsafe overlap, and implausible weekly changes.
 - GitHub-hosted automation researches or proposes updates to the checked-in JSON. Personal scenario values are never sent to GitHub.
 
@@ -19,6 +20,7 @@ Node.js 22 or newer is recommended.
 npm ci
 npm test
 npm run validate:data
+npm run validate:fx
 npx serve .
 ```
 
@@ -31,6 +33,10 @@ Open the local URL printed by `serve`. Opening `index.html` directly is not supp
 Deterministic post-steps run the test suite and compare the candidate with the exact trigger revision. Weekly changes above 15% for adopted defaults or 25% for normalized evidence are blocked. Failed, inaccessible, or ambiguous sources retain the last-known-good value. University living-at-home allowances cannot be added to household housing, food, or transport.
 
 The separate `Validate cost data` workflow runs on changes, manually, and every Sunday as a deterministic health check. It validates known-good data but does not claim to research new values.
+
+`.github/workflows/refresh-exchange-rate.yml` is a separate deterministic Sunday job. It fetches only EUR/USD from `https://api.frankfurter.dev`, validates the pair, dates, positive finite rate, source, and a 10% week-over-week movement limit, then commits only `data/exchange-rates.v1.json`. A failed request or rejected candidate leaves the last-known-good fallback untouched and consumes no agentic credits.
+
+The Local/USD preference is stored in the browser. Jávea and Savona remain canonically EUR and Seattle remains canonically USD; conversion affects presentation and exports without rewriting saved local-currency inputs. Exports identify the display currency and include the exact FX provenance when conversion was applied.
 
 ## One-time agentic workflow setup
 

@@ -9,9 +9,11 @@ on:
       - schema/**
       - scripts/**
       - tests/**
+      - fx.js
       - package.json
       - package-lock.json
       - .github/workflows/data-quality.yml
+      - .github/workflows/refresh-exchange-rate.yml
   schedule:
     - cron: "17 5 * * 0"
   workflow_dispatch:
@@ -41,7 +43,9 @@ jobs:
         run: npm test
 
       - name: Validate checked-in data
-        run: npm run validate:data
+        run: |
+          npm run validate:data
+          npm run validate:fx
 
       - name: Enforce weekly-change thresholds on pull requests
         if: github.event_name == 'pull_request'
@@ -53,3 +57,8 @@ jobs:
           baseline="${RUNNER_TEMP}/costs.v1.baseline.json"
           git show "origin/${BASE_REF}:data/costs.v1.json" > "$baseline"
           node scripts/validate-data.mjs data/costs.v1.json --baseline "$baseline"
+          fx_baseline="${RUNNER_TEMP}/exchange-rates.v1.baseline.json"
+          if git cat-file -e "origin/${BASE_REF}:data/exchange-rates.v1.json" 2>/dev/null; then
+            git show "origin/${BASE_REF}:data/exchange-rates.v1.json" > "$fx_baseline"
+            node scripts/validate-exchange-rate.mjs data/exchange-rates.v1.json --baseline "$fx_baseline"
+          fi

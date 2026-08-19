@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "baseCurrency": "EUR",
+  "quoteCurrency": "USD",
+  "rate": 1.1576,
+  "observationDate": "2026-08-18",
+  "retrievedAt": "2026-08-19T09:29:51Z",
+  "sourceName": "Frankfurter — ECB reference rates",
+  "sourceUrl": "https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD",
+  "staleAfterDays": 10
+}

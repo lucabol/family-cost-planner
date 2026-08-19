@@ -51,7 +51,19 @@
     </section>
 
     <div id="app" hidden>
-      <nav class="city-tabs" aria-label="Choose a city" id="cityTabs"></nav>
+      <div class="planner-controls">
+        <nav class="city-tabs" aria-label="Choose a city" id="cityTabs"></nav>
+        <aside class="currency-control" aria-labelledby="currencyLabel">
+          <div class="currency-control-row">
+            <span id="currencyLabel">Display currency</span>
+            <div class="segmented-control" role="group" aria-label="Display currency">
+              <button id="localCurrencyButton" type="button" aria-pressed="true">Local</button>
+              <button id="usdCurrencyButton" type="button" aria-pressed="false">USD</button>
+            </div>
+          </div>
+          <p id="exchangeRateStatus" aria-live="polite">Loading exchange rate…</p>
+        </aside>
+      </div>
 
       <section class="city-brief" aria-labelledby="cityHeading">
         <div class="city-title">

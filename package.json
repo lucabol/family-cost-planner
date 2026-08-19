@@ -6,7 +6,9 @@
   "scripts": {
     "test": "node --test",
     "validate:data": "node scripts/validate-data.mjs data/costs.v1.json",
-    "validate:candidate": "node scripts/validate-data.mjs data/candidate.json --baseline data/costs.v1.json"
+    "validate:candidate": "node scripts/validate-data.mjs data/candidate.json --baseline data/costs.v1.json",
+    "validate:fx": "node scripts/validate-exchange-rate.mjs data/exchange-rates.v1.json",
+    "refresh:fx": "node scripts/refresh-exchange-rate.mjs"
   },
   "devDependencies": {
     "ajv": "8.17.1",
