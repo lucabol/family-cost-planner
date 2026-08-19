@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lucabol.github.io/family-cost-planner/schema/cost-data.schema.json",
+  "title": "Family cost planner evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "refreshedAt", "household", "cities"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "refreshedAt": { "type": "string", "format": "date-time" },
+    "household": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adults", "universityStudentsAtHome", "secondaryStudents", "notes"],
+      "properties": {
+        "adults": { "const": 2 },
+        "universityStudentsAtHome": { "const": 1 },
+        "secondaryStudents": { "const": 1 },
+        "notes": { "type": "string", "minLength": 1 }
+      }
+    },
+    "cities": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/city" }
+    }
+  },
+  "$defs": {
+    "city": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "country", "currency", "locale", "sources", "items"],
+      "properties": {
+        "id": { "enum": ["javea", "savona", "seattle"] },
+        "name": { "type": "string", "minLength": 1 },
+        "country": { "enum": ["Spain", "Italy", "United States"] },
+        "currency": { "enum": ["EUR", "USD"] },
+        "locale": { "enum": ["es-ES", "it-IT", "en-US"] },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/source" }
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/item" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "url", "reliability", "observationDate", "retrievedAt", "staleAfterDays", "notes"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "reliability": {
+          "enum": ["high", "medium-high", "medium", "medium-low", "planning-assumption"]
+        },
+        "observationDate": { "type": "string", "format": "date" },
+        "retrievedAt": { "type": "string", "format": "date-time" },
+        "staleAfterDays": { "type": "integer", "minimum": 7, "maximum": 730 },
+        "notes": { "type": "string", "minLength": 1 }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "defaultMonthly", "notes", "evidence"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "label": { "type": "string", "minLength": 1 },
+        "defaultMonthly": { "type": "number", "minimum": 0 },
+        "notes": { "type": "string", "minLength": 1 },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/evidence" }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "original", "monthlyNormalized", "includedInDefault", "overlaps", "notes"],
+      "properties": {
+        "sourceId": { "type": "string", "minLength": 1 },
+        "original": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["unit", "currency", "value"],
+          "properties": {
+            "unit": { "enum": ["monthly", "annual", "one-time", "qualitative"] },
+            "currency": { "enum": ["EUR", "USD", "NONE"] },
+            "value": { "type": "string", "minLength": 1 }
+          }
+        },
+        "monthlyNormalized": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["value"],
+              "properties": { "value": { "type": "number", "minimum": 0 } }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "number", "minimum": 0 },
+                "max": { "type": "number", "minimum": 0 }
+              }
+            }
+          ]
+        },
+        "includedInDefault": { "type": "boolean" },
+        "overlaps": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["housing", "food", "transport", "healthcare", "other-household"]
+          }
+        },
+        "notes": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

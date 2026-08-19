@@ -1,0 +1,89 @@
+name: Propose manual data refresh
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_json:
+        description: Complete candidate contents for data/costs.v1.json
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  propose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Write candidate
+        env:
+          CANDIDATE_JSON: ${{ inputs.candidate_json }}
+        run: node -e "require('node:fs').writeFileSync('data/costs.v1.json', process.env.CANDIDATE_JSON)"
+
+      - name: Reject malformed or unsafe data
+        run: |
+          npm test
+          npm run validate:data
+
+      - name: Assess weekly-change thresholds
+        id: thresholds
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          baseline="${RUNNER_TEMP}/costs.v1.baseline.json"
+          git show "HEAD:data/costs.v1.json" > "$baseline"
+          node scripts/validate-data.mjs data/costs.v1.json --baseline "$baseline"
+
+      - name: Stop when candidate is unchanged
+        id: changes
+        shell: bash
+        run: |
+          if git diff --quiet -- data/costs.v1.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create draft pull request
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          THRESHOLD_OUTCOME: ${{ steps.thresholds.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch="automation/manual-refresh-${GITHUB_RUN_ID}"
+          review_note="All deterministic thresholds passed."
+          title="[cost-data] Manual refresh proposal"
+          if [ "$THRESHOLD_OUTCOME" != "success" ]; then
+            review_note="One or more weekly-change thresholds failed. This draft requires explicit manual review before merge."
+            title="[cost-data] Manual review required for refresh"
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add data/costs.v1.json
+          git commit -m "Propose manual cost data refresh"
+          git push --set-upstream origin "$branch"
+          gh pr create \
+            --draft \
+            --base main \
+            --head "$branch" \
+            --title "$title" \
+            --body "Submitted through the deterministic manual fallback workflow. ${review_note}"

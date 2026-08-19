@@ -1,0 +1,55 @@
+name: Validate cost data
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - data/**
+      - schema/**
+      - scripts/**
+      - tests/**
+      - package.json
+      - package-lock.json
+      - .github/workflows/data-quality.yml
+  schedule:
+    - cron: "17 5 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run schema and semantic tests
+        run: npm test
+
+      - name: Validate checked-in data
+        run: npm run validate:data
+
+      - name: Enforce weekly-change thresholds on pull requests
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          baseline="${RUNNER_TEMP}/costs.v1.baseline.json"
+          git show "origin/${BASE_REF}:data/costs.v1.json" > "$baseline"
+          node scripts/validate-data.mjs data/costs.v1.json --baseline "$baseline"

@@ -1,0 +1,727 @@
+{
+  "schemaVersion": 1,
+  "refreshedAt": "2026-08-19T06:48:56Z",
+  "household": {
+    "adults": 2,
+    "universityStudentsAtHome": 1,
+    "secondaryStudents": 1,
+    "notes": "Two adults, one public-university student living at home, and one public-secondary-school student."
+  },
+  "cities": [
+    {
+      "id": "javea",
+      "name": "Jávea / Xàbia",
+      "country": "Spain",
+      "currency": "EUR",
+      "locale": "es-ES",
+      "sources": [
+        {
+          "id": "idealista-javea",
+          "name": "Idealista — Jávea rentals",
+          "url": "https://www.idealista.com/en/alquiler-viviendas/javeaxabia-alicante/con-pisos/",
+          "reliability": "medium-high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 45,
+          "notes": "Large listing set; asking rents and seasonal leases can distort the market. This is a property portal, not an official statistic."
+        },
+        {
+          "id": "welove-xabia",
+          "name": "We Love Xàbia 2026 guide",
+          "url": "https://welovexabia.com/news/javea-expat-guide-2026",
+          "reliability": "medium",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 120,
+          "notes": "Locally specific guide, but methodology and sample size are not published."
+        },
+        {
+          "id": "numbeo-javea",
+          "name": "Numbeo — Jávea",
+          "url": "https://www.numbeo.com/cost-of-living/in/Javea-Xabia-Spain",
+          "reliability": "medium-low",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 90,
+          "notes": "Crowd-sourced observations with an uncertain local sample; not an official estimate."
+        },
+        {
+          "id": "gva-fees",
+          "name": "Generalitat Valenciana public-university fees",
+          "url": "https://universitats.gva.es/es/decret-preus-publics",
+          "reliability": "high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Official legal source for public-university prices."
+        },
+        {
+          "id": "ua-calculator",
+          "name": "University of Alicante tuition calculator",
+          "url": "https://web.ua.es/en/simulador-importe-matricula/tuition-fee-calculator.html",
+          "reliability": "high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Official calculator; exact tuition depends on degree, credits, and exemptions."
+        },
+        {
+          "id": "javea-planner-assumption",
+          "name": "Planner adopted assumption — Jávea",
+          "url": "https://github.com/lucabol/family-cost-planner/blob/main/data/costs.v1.json",
+          "reliability": "planning-assumption",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Explicit planning placeholder where no standardized external figure was available."
+        }
+      ],
+      "items": [
+        {
+          "id": "housing",
+          "label": "Three-bedroom rent",
+          "defaultMonthly": 1300,
+          "notes": "A central planning value within the portal range; seasonal inventory can be materially higher.",
+          "evidence": [
+            {
+              "sourceId": "idealista-javea",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€1,100–€1,500" },
+              "monthlyNormalized": { "min": 1100, "max": 1500 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Asking-rent range used as the primary default basis."
+            },
+            {
+              "sourceId": "welove-xabia",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "Villa: €1,800–€3,500" },
+              "monthlyNormalized": { "min": 1800, "max": 3500 },
+              "includedInDefault": false,
+              "overlaps": [],
+              "notes": "Villa guide retained as context but excluded from the adopted apartment-style default."
+            }
+          ]
+        },
+        {
+          "id": "utilities-internet",
+          "label": "Utilities + internet",
+          "defaultMonthly": 200,
+          "notes": "Editable midpoint-style allowance.",
+          "evidence": [
+            {
+              "sourceId": "welove-xabia",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€150–€250" },
+              "monthlyNormalized": { "min": 150, "max": 250 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Local guide range."
+            }
+          ]
+        },
+        {
+          "id": "food",
+          "label": "Food for four",
+          "defaultMonthly": 850,
+          "notes": "Household food only; no university living allowance is added separately.",
+          "evidence": [
+            {
+              "sourceId": "welove-xabia",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€693–€1,039" },
+              "monthlyNormalized": { "min": 693, "max": 1039 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Local guide range adopted for a four-person household."
+            }
+          ]
+        },
+        {
+          "id": "transport",
+          "label": "Transport / car",
+          "defaultMonthly": 250,
+          "notes": "Local transport and car allowance.",
+          "evidence": [
+            {
+              "sourceId": "numbeo-javea",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€150–€250" },
+              "monthlyNormalized": { "min": 150, "max": 250 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Crowd-sourced range; the upper bound is adopted."
+            }
+          ]
+        },
+        {
+          "id": "healthcare",
+          "label": "Healthcare",
+          "defaultMonthly": 150,
+          "notes": "Private-cover planning allowance; eligible residents may use the public system.",
+          "evidence": [
+            {
+              "sourceId": "numbeo-javea",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "Private cover: €120–€300" },
+              "monthlyNormalized": { "min": 120, "max": 300 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Non-official private-cover estimate."
+            }
+          ]
+        },
+        {
+          "id": "university-tuition",
+          "label": "Public university tuition",
+          "defaultMonthly": 113,
+          "notes": "Annual public tuition normalized monthly; degree and exemptions change the exact amount.",
+          "evidence": [
+            {
+              "sourceId": "gva-fees",
+              "original": { "unit": "annual", "currency": "EUR", "value": "€900–€1,800/year" },
+              "monthlyNormalized": { "min": 75, "max": 150 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Official public-price range normalized over 12 months."
+            },
+            {
+              "sourceId": "ua-calculator",
+              "original": { "unit": "qualitative", "currency": "EUR", "value": "Course-specific official calculator" },
+              "monthlyNormalized": { "value": 113 },
+              "includedInDefault": false,
+              "overlaps": [],
+              "notes": "Use the calculator for an exact course load; the planner retains the adopted midpoint."
+            }
+          ]
+        },
+        {
+          "id": "university-books",
+          "label": "University books",
+          "defaultMonthly": 55,
+          "notes": "No standardized local figure was found.",
+          "evidence": [
+            {
+              "sourceId": "javea-planner-assumption",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€55 adopted assumption" },
+              "monthlyNormalized": { "value": 55 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Clearly labeled planning placeholder."
+            }
+          ]
+        },
+        {
+          "id": "secondary-school",
+          "label": "Public secondary school",
+          "defaultMonthly": 32,
+          "notes": "Public tuition excluded; allowance covers supplies and incidental costs, not meals.",
+          "evidence": [
+            {
+              "sourceId": "javea-planner-assumption",
+              "original": { "unit": "annual", "currency": "EUR", "value": "€250–€500/year excluding meals" },
+              "monthlyNormalized": { "min": 20.83, "max": 41.67 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Prototype planning range normalized over 12 months."
+            }
+          ]
+        },
+        {
+          "id": "other-household",
+          "label": "Other household costs",
+          "defaultMonthly": 500,
+          "notes": "Clothing, household goods, and irregular essentials.",
+          "evidence": [
+            {
+              "sourceId": "javea-planner-assumption",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€500 adopted assumption" },
+              "monthlyNormalized": { "value": 500 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Editable planning placeholder rather than an observed market statistic."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "savona",
+      "name": "Savona",
+      "country": "Italy",
+      "currency": "EUR",
+      "locale": "it-IT",
+      "sources": [
+        {
+          "id": "immobiliare-savona",
+          "name": "Immobiliare.it — Savona",
+          "url": "https://www.immobiliare.it/en/mercato-immobiliare/liguria/savona/",
+          "reliability": "medium-high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 45,
+          "notes": "Large listing sample; asking rents are not signed leases. This is a property portal, not an official statistic."
+        },
+        {
+          "id": "livingcost-savona",
+          "name": "LivingCost — Savona",
+          "url": "https://livingcost.org/cost/italy/li/savona",
+          "reliability": "medium-low",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 90,
+          "notes": "Broad item coverage, but the local sample and model are not transparent; not an official estimate."
+        },
+        {
+          "id": "numbeo-savona",
+          "name": "Numbeo — Savona",
+          "url": "https://www.numbeo.com/cost-of-living/in/Savona",
+          "reliability": "medium-low",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 90,
+          "notes": "Crowd-sourced observations with limited coverage in a smaller city; not an official estimate."
+        },
+        {
+          "id": "unige-fees",
+          "name": "University of Genoa fees",
+          "url": "https://unige.it/en/tasse-e-benefici/calcolo-contributo-universitario",
+          "reliability": "high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Official ISEE-based tuition rules and maximum charges."
+        },
+        {
+          "id": "unige-isee",
+          "name": "University of Genoa ISEE guidance",
+          "url": "https://unige.it/en/tasse-e-benefici/isee",
+          "reliability": "high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Official eligibility and income-assessment guidance."
+        },
+        {
+          "id": "savona-planner-assumption",
+          "name": "Planner adopted assumption — Savona",
+          "url": "https://github.com/lucabol/family-cost-planner/blob/main/data/costs.v1.json",
+          "reliability": "planning-assumption",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Explicit planning placeholder where no standardized external figure was available."
+        }
+      ],
+      "items": [
+        {
+          "id": "housing",
+          "label": "Three-bedroom rent",
+          "defaultMonthly": 1000,
+          "notes": "Portal range adopted as the primary basis.",
+          "evidence": [
+            {
+              "sourceId": "immobiliare-savona",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€900–€1,100" },
+              "monthlyNormalized": { "min": 900, "max": 1100 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Asking-rent range."
+            },
+            {
+              "sourceId": "livingcost-savona",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€780–€920" },
+              "monthlyNormalized": { "min": 780, "max": 920 },
+              "includedInDefault": false,
+              "overlaps": [],
+              "notes": "Lower-reliability comparison retained as context."
+            }
+          ]
+        },
+        {
+          "id": "utilities-internet",
+          "label": "Utilities + internet",
+          "defaultMonthly": 188,
+          "notes": "Upper-middle planning value across lower-reliability estimates.",
+          "evidence": [
+            {
+              "sourceId": "livingcost-savona",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€175–€185" },
+              "monthlyNormalized": { "min": 175, "max": 185 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Modeled estimate."
+            },
+            {
+              "sourceId": "numbeo-savona",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€175–€190" },
+              "monthlyNormalized": { "min": 175, "max": 190 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Crowd-sourced comparison."
+            }
+          ]
+        },
+        {
+          "id": "food",
+          "label": "Food for four",
+          "defaultMonthly": 1325,
+          "notes": "Conservative adopted allowance below modeled estimates; edit for household habits.",
+          "evidence": [
+            {
+              "sourceId": "livingcost-savona",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "≈€1,425" },
+              "monthlyNormalized": { "value": 1425 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Modeled estimate retained with lower-reliability label."
+            },
+            {
+              "sourceId": "numbeo-savona",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€1,425–€1,460" },
+              "monthlyNormalized": { "min": 1425, "max": 1460 },
+              "includedInDefault": false,
+              "overlaps": [],
+              "notes": "Crowd-sourced comparison."
+            }
+          ]
+        },
+        {
+          "id": "transport",
+          "label": "Transport",
+          "defaultMonthly": 145,
+          "notes": "Local public and incidental transport allowance.",
+          "evidence": [
+            {
+              "sourceId": "livingcost-savona",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€100–€115" },
+              "monthlyNormalized": { "min": 100, "max": 115 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Modeled estimate; adopted default includes extra flexibility."
+            }
+          ]
+        },
+        {
+          "id": "healthcare",
+          "label": "Healthcare",
+          "defaultMonthly": 100,
+          "notes": "Incidental and private-cost allowance alongside Italy's SSN.",
+          "evidence": [
+            {
+              "sourceId": "savona-planner-assumption",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€100 adopted assumption" },
+              "monthlyNormalized": { "value": 100 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Planning placeholder; SSN eligibility and out-of-pocket needs vary."
+            }
+          ]
+        },
+        {
+          "id": "university-tuition",
+          "label": "Public university tuition",
+          "defaultMonthly": 149,
+          "notes": "ISEE-based annual charge normalized monthly.",
+          "evidence": [
+            {
+              "sourceId": "unige-fees",
+              "original": { "unit": "annual", "currency": "EUR", "value": "€136–€3,436/year" },
+              "monthlyNormalized": { "min": 11.33, "max": 286.33 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Official range; adopted default assumes a mid-range ISEE outcome."
+            },
+            {
+              "sourceId": "unige-isee",
+              "original": { "unit": "qualitative", "currency": "EUR", "value": "ISEE determines contribution" },
+              "monthlyNormalized": { "value": 149 },
+              "includedInDefault": false,
+              "overlaps": [],
+              "notes": "Official assessment guidance supporting the adopted planning point."
+            }
+          ]
+        },
+        {
+          "id": "university-books",
+          "label": "University books",
+          "defaultMonthly": 55,
+          "notes": "No standardized local figure was found.",
+          "evidence": [
+            {
+              "sourceId": "savona-planner-assumption",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€55 adopted assumption" },
+              "monthlyNormalized": { "value": 55 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Clearly labeled planning placeholder."
+            }
+          ]
+        },
+        {
+          "id": "secondary-school",
+          "label": "Public secondary school",
+          "defaultMonthly": 32,
+          "notes": "Public tuition excluded; supplies and incidental costs only.",
+          "evidence": [
+            {
+              "sourceId": "savona-planner-assumption",
+              "original": { "unit": "annual", "currency": "EUR", "value": "€250–€500/year" },
+              "monthlyNormalized": { "min": 20.83, "max": 41.67 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Prototype planning range normalized over 12 months."
+            }
+          ]
+        },
+        {
+          "id": "other-household",
+          "label": "Other household costs",
+          "defaultMonthly": 450,
+          "notes": "Clothing, household goods, and irregular essentials.",
+          "evidence": [
+            {
+              "sourceId": "savona-planner-assumption",
+              "original": { "unit": "monthly", "currency": "EUR", "value": "€450 adopted assumption" },
+              "monthlyNormalized": { "value": 450 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Editable planning placeholder rather than an observed market statistic."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seattle",
+      "name": "Seattle",
+      "country": "United States",
+      "currency": "USD",
+      "locale": "en-US",
+      "sources": [
+        {
+          "id": "mit-king-county",
+          "name": "MIT Living Wage — King County",
+          "url": "https://livingwage.mit.edu/counties/53033",
+          "reliability": "high",
+          "observationDate": "2026-02-15",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 400,
+          "notes": "Transparent methodology using government datasets; source page reported a February 2026 update."
+        },
+        {
+          "id": "hud-fmr",
+          "name": "HUD Fair Market Rent",
+          "url": "https://www.huduser.gov/portal/datasets/fmr.html",
+          "reliability": "high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Official government benchmark; it is not the same as average asking rent."
+        },
+        {
+          "id": "uw-coa",
+          "name": "University of Washington cost of attendance",
+          "url": "https://admit.washington.edu/costs/coa/",
+          "reliability": "high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Official tuition, books, transport, and planning allowances. Living-at-home housing, food, and transport allowances are not added to household categories."
+        },
+        {
+          "id": "seattle-schools",
+          "name": "Seattle Public Schools",
+          "url": "https://www.seattleschools.org/",
+          "reliability": "high",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Official district source; public secondary tuition is zero and supply costs differ by school."
+        },
+        {
+          "id": "seattle-planner-assumption",
+          "name": "Planner adopted assumption — Seattle",
+          "url": "https://github.com/lucabol/family-cost-planner/blob/main/data/costs.v1.json",
+          "reliability": "planning-assumption",
+          "observationDate": "2026-08-19",
+          "retrievedAt": "2026-08-19T06:48:56Z",
+          "staleAfterDays": 365,
+          "notes": "Explicit planning placeholder where no standardized external figure was available."
+        }
+      ],
+      "items": [
+        {
+          "id": "housing",
+          "label": "Housing",
+          "defaultMonthly": 2850,
+          "notes": "Uses the low end of the HUD range; UW living-at-home housing allowance is excluded.",
+          "evidence": [
+            {
+              "sourceId": "mit-king-county",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$2,571" },
+              "monthlyNormalized": { "value": 2571 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "MIT household housing component."
+            },
+            {
+              "sourceId": "hud-fmr",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$2,850–$4,910" },
+              "monthlyNormalized": { "min": 2850, "max": 4910 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Official FMR benchmark range retained alongside MIT."
+            }
+          ]
+        },
+        {
+          "id": "food",
+          "label": "Food",
+          "defaultMonthly": 1277,
+          "notes": "MIT household food component only; UW living-at-home food allowance is excluded.",
+          "evidence": [
+            {
+              "sourceId": "mit-king-county",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$1,277" },
+              "monthlyNormalized": { "value": 1277 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Household-level food estimate."
+            }
+          ]
+        },
+        {
+          "id": "healthcare",
+          "label": "Healthcare",
+          "defaultMonthly": 895,
+          "notes": "MIT household component.",
+          "evidence": [
+            {
+              "sourceId": "mit-king-county",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$895" },
+              "monthlyNormalized": { "value": 895 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Household-level healthcare estimate."
+            }
+          ]
+        },
+        {
+          "id": "transport",
+          "label": "Transport",
+          "defaultMonthly": 1180,
+          "notes": "MIT household component only; UW student transport allowance is excluded.",
+          "evidence": [
+            {
+              "sourceId": "mit-king-county",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$1,180" },
+              "monthlyNormalized": { "value": 1180 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Household-level transport estimate."
+            }
+          ]
+        },
+        {
+          "id": "civic-participation",
+          "label": "Civic / participation",
+          "defaultMonthly": 819,
+          "notes": "MIT civic-engagement component.",
+          "evidence": [
+            {
+              "sourceId": "mit-king-county",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$819" },
+              "monthlyNormalized": { "value": 819 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Household-level civic participation estimate."
+            }
+          ]
+        },
+        {
+          "id": "internet-mobile",
+          "label": "Internet + mobile",
+          "defaultMonthly": 252,
+          "notes": "MIT household internet and mobile component.",
+          "evidence": [
+            {
+              "sourceId": "mit-king-county",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$252" },
+              "monthlyNormalized": { "value": 252 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Household-level connectivity estimate."
+            }
+          ]
+        },
+        {
+          "id": "other-household",
+          "label": "Other necessities",
+          "defaultMonthly": 900,
+          "notes": "MIT household component; UW personal allowance is excluded.",
+          "evidence": [
+            {
+              "sourceId": "mit-king-county",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$900" },
+              "monthlyNormalized": { "value": 900 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Household-level other necessities estimate."
+            }
+          ]
+        },
+        {
+          "id": "university-tuition",
+          "label": "University tuition + fees",
+          "defaultMonthly": 1117,
+          "notes": "Official annual tuition and fees normalized monthly.",
+          "evidence": [
+            {
+              "sourceId": "uw-coa",
+              "original": { "unit": "annual", "currency": "USD", "value": "$13,406/year" },
+              "monthlyNormalized": { "value": 1117.17 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Tuition and required fees only; no living allowance is included."
+            }
+          ]
+        },
+        {
+          "id": "university-books",
+          "label": "University books",
+          "defaultMonthly": 75,
+          "notes": "Official annual book allowance normalized monthly.",
+          "evidence": [
+            {
+              "sourceId": "uw-coa",
+              "original": { "unit": "annual", "currency": "USD", "value": "$900/year" },
+              "monthlyNormalized": { "value": 75 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Books and materials only."
+            }
+          ]
+        },
+        {
+          "id": "secondary-school",
+          "label": "Public secondary school",
+          "defaultMonthly": 50,
+          "notes": "No tuition; adopted allowance covers variable supplies and activities.",
+          "evidence": [
+            {
+              "sourceId": "seattle-schools",
+              "original": { "unit": "qualitative", "currency": "NONE", "value": "No public-school tuition; supplies vary" },
+              "monthlyNormalized": { "value": 0 },
+              "includedInDefault": false,
+              "overlaps": [],
+              "notes": "Official district basis for zero tuition."
+            },
+            {
+              "sourceId": "seattle-planner-assumption",
+              "original": { "unit": "monthly", "currency": "USD", "value": "$50 adopted supply allowance" },
+              "monthlyNormalized": { "value": 50 },
+              "includedInDefault": true,
+              "overlaps": [],
+              "notes": "Editable planning placeholder for supplies and activities."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

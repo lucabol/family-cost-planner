@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An editable, source-backed family cost planner for Jávea/Xàbia, Savona, and Seattle.">
+  <title>Family Cost Planner</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <!--
+    THESIS: A family budget is a cited working ledger, not an opaque city score.
+    OWN-WORLD: Clawpilot neutrals and rose accent shape a compact household brief with ruled evidence rows.
+    STORY: Choose a city, inspect freshness and provenance, edit monthly assumptions, then export a private scenario.
+    FIRST VIEWPORT: Title and data health share the masthead; city tabs lead into one continuous summary ledger and evidence table.
+    FORM: An operational household ledger extending the supplied prototype, with provenance promoted beside every editable value.
+  -->
+  <a class="skip-link" href="#planner">Skip to planner</a>
+  <main class="shell" id="planner">
+    <header class="masthead">
+      <div class="intro">
+        <h1>Family cost planner</h1>
+        <p class="lede">Build a monthly plan for two adults, a university student living at home, and a public-secondary-school student.</p>
+      </div>
+      <aside class="refresh-panel" aria-labelledby="refreshTitle">
+        <div>
+          <span class="refresh-label" id="refreshTitle">Checked-in evidence</span>
+          <strong id="refreshDate">Loading…</strong>
+        </div>
+        <span class="status-pill" id="datasetStatus">Checking</span>
+      </aside>
+    </header>
+
+    <section class="loading-state" id="loadingState" aria-live="polite">
+      <p>Loading the latest validated data…</p>
+    </section>
+
+    <section class="error-state" id="errorState" hidden role="alert">
+      <h2>The planner data could not be loaded</h2>
+      <p>The page has not replaced it with estimates. Refresh the page or view the checked-in data on GitHub.</p>
+      <a href="https://github.com/lucabol/family-cost-planner/blob/main/data/costs.v1.json">Open the data file</a>
+    </section>
+
+    <div id="app" hidden>
+      <nav class="city-tabs" aria-label="Choose a city" id="cityTabs"></nav>
+
+      <section class="city-brief" aria-labelledby="cityHeading">
+        <div class="city-title">
+          <p id="cityCountry"></p>
+          <h2 id="cityHeading"></h2>
+        </div>
+        <div class="city-actions">
+          <button id="resetButton" type="button">Reset this city</button>
+          <button id="exportButton" class="primary" type="button">Export scenario</button>
+        </div>
+      </section>
+
+      <section class="summary-strip" aria-label="Budget summary">
+        <div class="summary-primary">
+          <span>Recommended monthly net income</span>
+          <strong id="recommendedTotal">—</strong>
+          <small>Essentials plus contingency</small>
+        </div>
+        <dl class="summary-details">
+          <div>
+            <dt>Monthly essentials</dt>
+            <dd id="baseTotal">—</dd>
+          </div>
+          <div>
+            <dt>Contingency</dt>
+            <dd id="bufferAmount">—</dd>
+          </div>
+          <div>
+            <dt>Annual net income</dt>
+            <dd id="annualTotal">—</dd>
+          </div>
+        </dl>
+        <label class="contingency-control" for="bufferInput">
+          <span>Contingency</span>
+          <span class="number-field"><input id="bufferInput" type="number" min="0" max="100" step="1" value="10"><span>%</span></span>
+        </label>
+      </section>
+
+      <p class="save-status" id="saveStatus" aria-live="polite"></p>
+
+      <section class="evidence-section" aria-labelledby="evidenceHeading">
+        <div class="section-heading">
+          <div>
+            <h2 id="evidenceHeading">Monthly evidence and your inputs</h2>
+            <p>Adopted defaults are starting points. Your edits stay in this browser.</p>
+          </div>
+          <button class="text-button" id="expandAllButton" type="button" aria-expanded="false">Show all evidence</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Monthly item</th>
+                <th scope="col">Adopted default</th>
+                <th scope="col">Evidence basis</th>
+                <th scope="col">Your monthly input</th>
+              </tr>
+            </thead>
+            <tbody id="budgetRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="provenance" aria-labelledby="sourcesHeading">
+        <div class="section-heading">
+          <div>
+            <h2 id="sourcesHeading">Sources, dates, and reliability</h2>
+            <p>Official and methodologically transparent sources receive the strongest rating. Portals and crowd-sourced estimates remain clearly labeled.</p>
+          </div>
+        </div>
+        <div class="source-list" id="sourceList"></div>
+      </section>
+
+      <aside class="method-note" aria-labelledby="methodHeading">
+        <div>
+          <h2 id="methodHeading">Static page, hosted refresh</h2>
+          <p>The planner runs entirely in your browser. GitHub-hosted automation researches updates to the checked-in JSON, and deterministic validation protects the last-known-good data.</p>
+        </div>
+        <ul>
+          <li>Living-at-home university allowances are not added again to household housing, food, or transport.</li>
+          <li>Stale labels are calculated from each source’s observation date and review window.</li>
+          <li>Planning estimates are not financial advice.</li>
+        </ul>
+      </aside>
+    </div>
+  </main>
+  <footer>
+    <p>Personal values are stored locally and never transmitted. <a href="https://github.com/lucabol/family-cost-planner">View source and methodology</a>.</p>
+  </footer>
+</body>
+</html>
