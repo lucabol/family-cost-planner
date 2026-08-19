@@ -54,7 +54,7 @@ const elements = {
   resetButton: document.querySelector("#resetButton"),
   exportButton: document.querySelector("#exportButton"),
   expandAllButton: document.querySelector("#expandAllButton"),
-  localCurrencyButton: document.querySelector("#localCurrencyButton"),
+  eurCurrencyButton: document.querySelector("#eurCurrencyButton"),
   usdCurrencyButton: document.querySelector("#usdCurrencyButton"),
   exchangeRateStatus: document.querySelector("#exchangeRateStatus")
 };
@@ -71,7 +71,7 @@ function loadSaved() {
 function loadDisplayMode() {
   return localStorage.getItem(DISPLAY_CURRENCY_KEY) === DISPLAY_MODES.USD
     ? DISPLAY_MODES.USD
-    : DISPLAY_MODES.LOCAL;
+    : DISPLAY_MODES.EUR;
 }
 
 function city() {
@@ -95,7 +95,7 @@ function scenario() {
 }
 
 function currentDisplayCurrency(currentCity = city()) {
-  return displayCurrency(currentCity.currency, state.displayMode);
+  return displayCurrency(state.displayMode);
 }
 
 function amountForDisplay(value, currentCity = city()) {
@@ -169,7 +169,7 @@ function inputValue(value, currentCity = city()) {
   return Number.isInteger(displayed) ? displayed : displayed.toFixed(2);
 }
 
-function defaultReviewBadge(item, sources) {
+function defaultReviewBadge(item, sources, currentCity) {
   const flag = item.defaultSelection.reviewFlags[0];
   if (!flag) return "";
 
@@ -177,12 +177,13 @@ function defaultReviewBadge(item, sources) {
   if (flag.code === "singleton-outlier") {
     const nextCandidate = item.defaultSelection.comparableCandidates[1];
     const nextSource = sources.get(nextCandidate.sourceId);
+    const selectedCandidate = item.defaultSelection.comparableCandidates[0];
     const gapLabel =
       flag.gapPercent === null ? "no non-zero comparison" : `${flag.gapPercent.toFixed(0)}% gap`;
     const explanation =
       flag.gapPercent === null
-        ? `${selectedSource.name} is the only non-zero comparable source. Its highest value remains selected and requires human review.`
-        : `${selectedSource.name} is ${flag.gapPercent.toFixed(2)}% above ${nextSource.name}. Its highest value remains selected and requires human review.`;
+        ? `${selectedSource.name} (${formatMoney(selectedCandidate.monthlyUpperBound, currentCity)}) is the only non-zero comparable source. Its highest value remains selected and requires human review.`
+        : `${selectedSource.name} (${formatMoney(selectedCandidate.monthlyUpperBound, currentCity)}) is ${flag.gapPercent.toFixed(2)}% above ${nextSource.name} (${formatMoney(nextCandidate.monthlyUpperBound, currentCity)}). Its highest value remains selected and requires human review.`;
     return `<span class="default-review-flag outlier" title="${escapeHtml(explanation)}">
       <span class="flag-mark" aria-hidden="true">!</span>
       <span>Review · ${escapeHtml(gapLabel)}</span>
@@ -281,7 +282,7 @@ function renderRows() {
         <th scope="row">${escapeHtml(item.label)}<small>${escapeHtml(item.notes)}</small></th>
         <td class="default-value" data-label="Adopted default">
           <span class="default-amount">${escapeHtml(formatMoney(item.defaultMonthly, currentCity))}</span>
-          ${defaultReviewBadge(item, sources)}
+          ${defaultReviewBadge(item, sources, currentCity)}
         </td>
         <td class="basis-cell" data-label="Evidence basis">
           <div class="evidence-summary">
@@ -309,19 +310,20 @@ function renderRows() {
 
 function renderCurrencyControl() {
   const hasRate = isValidExchangeRate(state.exchangeRate);
-  elements.localCurrencyButton.setAttribute(
+  elements.eurCurrencyButton.setAttribute(
     "aria-pressed",
-    String(state.displayMode === DISPLAY_MODES.LOCAL)
+    String(state.displayMode === DISPLAY_MODES.EUR)
   );
   elements.usdCurrencyButton.setAttribute(
     "aria-pressed",
     String(state.displayMode === DISPLAY_MODES.USD)
   );
+  elements.eurCurrencyButton.disabled = !hasRate;
   elements.usdCurrencyButton.disabled = !hasRate;
 
   if (!hasRate) {
     elements.exchangeRateStatus.innerHTML =
-      '<span class="fx-state stale">USD unavailable</span> · The checked-in rate is invalid.';
+      '<span class="fx-state stale">Currency conversion unavailable</span> · The checked-in EUR/USD rate is invalid.';
     return;
   }
 
@@ -333,8 +335,9 @@ function renderCurrencyControl() {
   const unavailable = state.liveRateUnavailable ? " · live request unavailable" : "";
   elements.exchangeRateStatus.innerHTML =
     `<span class="fx-state ${escapeHtml(statusClass)}">${escapeHtml(statusLabel)}</span> · ` +
-    `1 EUR = ${escapeHtml(rate.rate.toFixed(4))} USD · ` +
-    `${escapeHtml(formatDate(rate.observationDate))} · ` +
+    `EUR/USD · 1 EUR = ${escapeHtml(rate.rate.toFixed(4))} USD · ` +
+    `1 USD = ${escapeHtml((1 / rate.rate).toFixed(4))} EUR · ` +
+    `observed ${escapeHtml(formatDate(rate.observationDate))} · ` +
     `<a href="${escapeHtml(rate.sourceUrl)}" target="_blank" rel="noreferrer">` +
     `${escapeHtml(rate.sourceName)}</a>${unavailable}`;
 }
@@ -370,10 +373,7 @@ function renderCity() {
   const currentCity = city();
   const currentScenario = scenario();
   renderTabs();
-  const currencyContext =
-    state.displayMode === DISPLAY_MODES.USD && currentCity.currency !== "USD"
-      ? `USD display · canonical ${currentCity.currency}`
-      : currentCity.currency;
+  const currencyContext = `${state.displayMode} display · canonical ${currentCity.currency}`;
   elements.cityCountry.textContent = `${currentCity.country} · ${currencyContext}`;
   elements.cityHeading.textContent = currentCity.name;
   elements.bufferInput.value = currentScenario.contingency;
@@ -387,43 +387,63 @@ function exportScenario() {
   const currentCity = city();
   const canonicalValues = scenario().values;
   const contingency = Math.min(100, Math.max(0, Number(elements.bufferInput.value) || 0));
-  const values = Object.fromEntries(
+  const displayValues = Object.fromEntries(
     Object.entries(canonicalValues).map(([item, value]) => [
       item,
       roundForExport(amountForDisplay(value, currentCity))
     ])
   );
-  const monthlyEssentials = Object.values(values).reduce((sum, value) => sum + value, 0);
+  const canonicalMonthlyEssentials =
+    Object.values(canonicalValues).reduce((sum, value) => sum + value, 0);
+  const canonicalRecommendedMonthly =
+    canonicalMonthlyEssentials * (1 + contingency / 100);
+  const monthlyEssentials =
+    roundForExport(amountForDisplay(canonicalMonthlyEssentials, currentCity));
+  const recommendedMonthly =
+    roundForExport(amountForDisplay(canonicalRecommendedMonthly, currentCity));
   const selectedCurrency = currentDisplayCurrency(currentCity);
-  const conversionApplied =
-    state.displayMode === DISPLAY_MODES.USD && currentCity.currency === "EUR";
+  const conversionApplied = selectedCurrency !== currentCity.currency;
+  const conversionOperation = !conversionApplied
+    ? "none"
+    : currentCity.currency === "EUR"
+      ? "multiply canonical EUR by EUR/USD rate"
+      : "divide canonical USD by EUR/USD rate";
   const output = {
     city: currentCity.name,
     cityId: currentCity.id,
     currency: selectedCurrency,
-    displayMode: state.displayMode === DISPLAY_MODES.USD ? "USD" : "local",
-    localCurrency: currentCity.currency,
+    displayCurrency: selectedCurrency,
+    displayMode: state.displayMode,
+    canonicalCurrency: currentCity.currency,
     household: state.data.household,
     dataRefreshedAt: state.data.refreshedAt,
-    monthlyItems: values,
-    monthlyEssentials: roundForExport(monthlyEssentials),
+    monthlyItems: displayValues,
+    monthlyEssentials,
     contingencyPercent: contingency,
-    recommendedMonthlyNetIncome: roundForExport(monthlyEssentials * (1 + contingency / 100)),
-    recommendedAnnualNetIncome: roundForExport(monthlyEssentials * (1 + contingency / 100) * 12),
-    conversion: conversionApplied
-      ? {
-          applied: true,
-          baseCurrency: state.exchangeRate.baseCurrency,
-          quoteCurrency: state.exchangeRate.quoteCurrency,
-          rate: state.exchangeRate.rate,
-          observationDate: state.exchangeRate.observationDate,
-          retrievedAt: state.exchangeRate.retrievedAt,
-          sourceName: state.exchangeRate.sourceName,
-          sourceUrl: state.exchangeRate.sourceUrl,
-          rateOrigin: state.exchangeRateOrigin,
-          stale: exchangeRateIsStale(state.exchangeRate)
-        }
-      : { applied: false },
+    recommendedMonthlyNetIncome: recommendedMonthly,
+    recommendedAnnualNetIncome:
+      roundForExport(amountForDisplay(canonicalRecommendedMonthly * 12, currentCity)),
+    canonicalMonthlyItems: { ...canonicalValues },
+    canonicalMonthlyEssentials,
+    canonicalRecommendedMonthlyNetIncome: canonicalRecommendedMonthly,
+    canonicalRecommendedAnnualNetIncome: canonicalRecommendedMonthly * 12,
+    conversion: {
+      applied: conversionApplied,
+      fromCurrency: currentCity.currency,
+      toCurrency: selectedCurrency,
+      operation: conversionOperation,
+      direction: `${state.exchangeRate.baseCurrency}/${state.exchangeRate.quoteCurrency}`,
+      baseCurrency: state.exchangeRate.baseCurrency,
+      quoteCurrency: state.exchangeRate.quoteCurrency,
+      eurToUsdRate: state.exchangeRate.rate,
+      usdToEurRate: 1 / state.exchangeRate.rate,
+      observationDate: state.exchangeRate.observationDate,
+      retrievedAt: state.exchangeRate.retrievedAt,
+      sourceName: state.exchangeRate.sourceName,
+      sourceUrl: state.exchangeRate.sourceUrl,
+      rateOrigin: state.exchangeRateOrigin,
+      stale: exchangeRateIsStale(state.exchangeRate)
+    },
     generatedAt: new Date().toISOString()
   };
   const blob = new Blob([JSON.stringify(output, null, 2)], { type: "application/json" });
@@ -462,11 +482,9 @@ async function refreshLiveRate() {
     state.exchangeRate = candidate;
     state.exchangeRateOrigin = "live";
     state.liveRateUnavailable = false;
-    if (loadDisplayMode() === DISPLAY_MODES.USD) {
-      state.displayMode = DISPLAY_MODES.USD;
-    }
+    state.displayMode = loadDisplayMode();
     renderCurrencyControl();
-    if (state.displayMode === DISPLAY_MODES.USD) renderCity();
+    renderCity();
   } catch (error) {
     console.warn("Using checked-in exchange-rate fallback:", error.message);
     state.liveRateUnavailable = true;
@@ -479,23 +497,15 @@ async function initialize() {
     const dataResponse = await fetch(DATA_URL, { cache: "no-cache" });
     if (!dataResponse.ok) throw new Error(`Data request failed with ${dataResponse.status}`);
     state.data = await dataResponse.json();
-    try {
-      const exchangeRateResponse = await fetch(EXCHANGE_RATE_URL, { cache: "no-cache" });
-      if (!exchangeRateResponse.ok) {
-        throw new Error(`Exchange-rate request failed with ${exchangeRateResponse.status}`);
-      }
-      const fallback = await exchangeRateResponse.json();
-      if (!isValidExchangeRate(fallback)) {
-        throw new Error("Checked-in exchange-rate fallback failed validation");
-      }
-      state.exchangeRate = fallback;
-    } catch (error) {
-      console.warn("USD display will wait for a valid live rate:", error.message);
-      state.exchangeRate = null;
-      state.exchangeRateOrigin = "unavailable";
-      state.liveRateUnavailable = true;
-      state.displayMode = DISPLAY_MODES.LOCAL;
+    const exchangeRateResponse = await fetch(EXCHANGE_RATE_URL, { cache: "no-cache" });
+    if (!exchangeRateResponse.ok) {
+      throw new Error(`Exchange-rate request failed with ${exchangeRateResponse.status}`);
     }
+    const fallback = await exchangeRateResponse.json();
+    if (!isValidExchangeRate(fallback)) {
+      throw new Error("Checked-in exchange-rate fallback failed validation");
+    }
+    state.exchangeRate = fallback;
     renderDatasetStatus();
     renderCity();
     elements.loading.hidden = true;
@@ -516,8 +526,9 @@ elements.resetButton.addEventListener("click", () => {
   elements.saveStatus.textContent = "Reset to checked-in defaults";
 });
 elements.exportButton.addEventListener("click", exportScenario);
-elements.localCurrencyButton.addEventListener("click", () => {
-  state.displayMode = DISPLAY_MODES.LOCAL;
+elements.eurCurrencyButton.addEventListener("click", () => {
+  if (!isValidExchangeRate(state.exchangeRate)) return;
+  state.displayMode = DISPLAY_MODES.EUR;
   localStorage.setItem(DISPLAY_CURRENCY_KEY, state.displayMode);
   renderCity();
 });

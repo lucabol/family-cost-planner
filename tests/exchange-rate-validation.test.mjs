@@ -42,13 +42,30 @@ test("rejects implausible week-over-week movement", () => {
   assert(errors.some((error) => error.includes("weekly limit is 10%")));
 });
 
-test("converts EUR presentation values reversibly and leaves USD unchanged", () => {
-  const displayed = toDisplayAmount(100, "EUR", DISPLAY_MODES.USD, validRate);
-  assert.equal(displayed, 100 * validRate.rate);
-  assert.equal(toCanonicalAmount(displayed, "EUR", DISPLAY_MODES.USD, validRate), 100);
+test("converts both canonical currencies reversibly into either global display currency", () => {
+  const eurInUsd = toDisplayAmount(100, "EUR", DISPLAY_MODES.USD, validRate);
+  const usdInEur = toDisplayAmount(100, "USD", DISPLAY_MODES.EUR, validRate);
+  assert.equal(eurInUsd, 100 * validRate.rate);
+  assert.equal(usdInEur, 100 / validRate.rate);
+  assert.equal(toCanonicalAmount(eurInUsd, "EUR", DISPLAY_MODES.USD, validRate), 100);
+  assert.equal(toCanonicalAmount(usdInEur, "USD", DISPLAY_MODES.EUR, validRate), 100);
   assert.equal(toDisplayAmount(100, "USD", DISPLAY_MODES.USD, validRate), 100);
-  assert.equal(displayCurrency("EUR", DISPLAY_MODES.LOCAL), "EUR");
-  assert.equal(displayCurrency("EUR", DISPLAY_MODES.USD), "USD");
+  assert.equal(toDisplayAmount(100, "EUR", DISPLAY_MODES.EUR, validRate), 100);
+  assert.equal(displayCurrency(DISPLAY_MODES.EUR), "EUR");
+  assert.equal(displayCurrency(DISPLAY_MODES.USD), "USD");
+});
+
+test("converted edits preserve canonical precision without toggle drift", () => {
+  const editedEur = 4321.09;
+  const canonicalUsd = toCanonicalAmount(editedEur, "USD", DISPLAY_MODES.EUR, validRate);
+  assert.equal(toDisplayAmount(canonicalUsd, "USD", DISPLAY_MODES.EUR, validRate), editedEur);
+
+  let canonical = 9876.54321;
+  for (let index = 0; index < 100; index += 1) {
+    toDisplayAmount(canonical, "USD", DISPLAY_MODES.EUR, validRate);
+    toDisplayAmount(canonical, "USD", DISPLAY_MODES.USD, validRate);
+  }
+  assert.equal(canonical, 9876.54321);
 });
 
 test("labels stale rates and validates provider responses", () => {

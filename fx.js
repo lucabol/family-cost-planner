@@ -1,5 +1,5 @@
 export const DISPLAY_MODES = Object.freeze({
-  LOCAL: "LOCAL",
+  EUR: "EUR",
   USD: "USD"
 });
 
@@ -44,22 +44,33 @@ export function isPlausibleLiveRate(candidate, fallback, now = new Date()) {
   return Number.isFinite(change) && change <= MAX_LIVE_RATE_CHANGE;
 }
 
-export function displayCurrency(localCurrency, displayMode) {
-  return displayMode === DISPLAY_MODES.USD ? "USD" : localCurrency;
+function assertSupportedCurrency(currency, role) {
+  if (currency !== "EUR" && currency !== "USD") {
+    throw new Error(`Unsupported ${role} currency: ${currency}`);
+  }
 }
 
-export function toDisplayAmount(value, localCurrency, displayMode, rate) {
-  if (displayMode !== DISPLAY_MODES.USD || localCurrency === "USD") return value;
-  if (localCurrency !== "EUR" || !isValidExchangeRate(rate)) {
-    throw new Error(`No supported ${localCurrency} to USD exchange rate`);
-  }
-  return value * rate.rate;
+export function displayCurrency(displayMode) {
+  assertSupportedCurrency(displayMode, "display");
+  return displayMode;
 }
 
-export function toCanonicalAmount(value, localCurrency, displayMode, rate) {
-  if (displayMode !== DISPLAY_MODES.USD || localCurrency === "USD") return value;
-  if (localCurrency !== "EUR" || !isValidExchangeRate(rate)) {
-    throw new Error(`No supported USD to ${localCurrency} exchange rate`);
+export function toDisplayAmount(value, canonicalCurrency, displayMode, rate) {
+  assertSupportedCurrency(canonicalCurrency, "canonical");
+  const targetCurrency = displayCurrency(displayMode);
+  if (canonicalCurrency === targetCurrency) return value;
+  if (!isValidExchangeRate(rate)) {
+    throw new Error(`No valid EUR/USD rate for ${canonicalCurrency} to ${targetCurrency}`);
   }
-  return value / rate.rate;
+  return canonicalCurrency === "EUR" ? value * rate.rate : value / rate.rate;
+}
+
+export function toCanonicalAmount(value, canonicalCurrency, displayMode, rate) {
+  assertSupportedCurrency(canonicalCurrency, "canonical");
+  const sourceCurrency = displayCurrency(displayMode);
+  if (canonicalCurrency === sourceCurrency) return value;
+  if (!isValidExchangeRate(rate)) {
+    throw new Error(`No valid EUR/USD rate for ${sourceCurrency} to ${canonicalCurrency}`);
+  }
+  return canonicalCurrency === "EUR" ? value / rate.rate : value * rate.rate;
 }

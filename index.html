@@ -47,8 +47,8 @@
     </section>
 
     <section class="error-state" id="errorState" hidden role="alert">
-      <h2>The planner data could not be loaded</h2>
-      <p>The page has not replaced it with estimates. Refresh the page or view the checked-in data on GitHub.</p>
+      <h2>The planner or exchange-rate data could not be loaded</h2>
+      <p>The page has not replaced it with estimates or an unvalidated rate. Refresh the page or view the checked-in data on GitHub.</p>
       <a href="https://github.com/lucabol/family-cost-planner/blob/main/data/costs.v1.json">Open the data file</a>
     </section>
 
@@ -58,9 +58,9 @@
         <aside class="currency-control" aria-labelledby="currencyLabel">
           <div class="currency-control-row">
             <span id="currencyLabel">Display currency</span>
-            <div class="segmented-control" role="group" aria-label="Display currency">
-              <button id="localCurrencyButton" type="button" aria-pressed="true">Local</button>
-              <button id="usdCurrencyButton" type="button" aria-pressed="false">USD</button>
+            <div class="segmented-control" role="group" aria-label="Choose a global display currency">
+              <button id="eurCurrencyButton" type="button" aria-pressed="true" aria-label="Display all monetary values in euros">EUR</button>
+              <button id="usdCurrencyButton" type="button" aria-pressed="false" aria-label="Display all monetary values in US dollars">USD</button>
             </div>
           </div>
           <p id="exchangeRateStatus" aria-live="polite">Loading exchange rate…</p>

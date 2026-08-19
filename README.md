@@ -43,7 +43,7 @@ The separate `Validate cost data` workflow runs on changes, manually, and every 
 
 `.github/workflows/refresh-exchange-rate.yml` is a separate deterministic Sunday job. It fetches only EUR/USD from `https://api.frankfurter.dev`, validates the pair, dates, positive finite rate, source, and a 10% week-over-week movement limit, then commits only `data/exchange-rates.v1.json`. A failed request or rejected candidate leaves the last-known-good fallback untouched and consumes no agentic credits.
 
-The Local/USD preference is stored in the browser. Jávea and Savona remain canonically EUR and Seattle remains canonically USD; conversion affects presentation and exports without rewriting saved local-currency inputs. Exports identify the display currency and include the exact FX provenance when conversion was applied.
+The global EUR/USD display preference is stored in the browser. EUR mode converts Seattle's canonical USD values to EUR; USD mode converts Jávea and Savona's canonical EUR values to USD. The selector changes every monetary presentation surface and export without rewriting saved canonical inputs, so repeated toggles cannot introduce round-trip drift. Exports include display values, exact canonical values, the EUR/USD direction, both inverse rates, observation date, source, origin, and stale status.
 
 ## One-time agentic workflow setup
 
