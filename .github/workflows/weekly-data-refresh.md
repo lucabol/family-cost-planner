@@ -65,7 +65,9 @@ post-steps:
     run: |
       set -euo pipefail
       changed_files="$(git diff --name-only "$GITHUB_SHA" --)"
-      if [ "$changed_files" != "data/costs.v1.json" ]; then
+      if [ -z "$changed_files" ]; then
+        echo "No evidence-backed data changes were proposed."
+      elif [ "$changed_files" != "data/costs.v1.json" ]; then
         echo "Expected only data/costs.v1.json to change; got:"
         printf '%s\n' "$changed_files"
         exit 1
@@ -86,6 +88,26 @@ post-steps:
 
 safe-outputs:
   staged: false
+  threat-detection:
+    steps:
+      - name: Install pinned ripgrep
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="14.1.1"
+          archive="ripgrep-${version}-x86_64-unknown-linux-musl.tar.gz"
+          checksum="4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e"
+          base_url="https://github.com/BurntSushi/ripgrep/releases/download/${version}"
+          curl --fail --location --silent --show-error \
+            "${base_url}/${archive}" \
+            --output "${RUNNER_TEMP}/${archive}"
+          echo "${checksum}  ${RUNNER_TEMP}/${archive}" | sha256sum --check
+          tar --extract --gzip --file "${RUNNER_TEMP}/${archive}" --directory "${RUNNER_TEMP}"
+          mkdir -p "${RUNNER_TEMP}/bin"
+          install -m 0755 \
+            "${RUNNER_TEMP}/ripgrep-${version}-x86_64-unknown-linux-musl/rg" \
+            "${RUNNER_TEMP}/bin/rg"
+          echo "${RUNNER_TEMP}/bin" >> "${GITHUB_PATH}"
   create-pull-request:
     draft: true
     max: 1
