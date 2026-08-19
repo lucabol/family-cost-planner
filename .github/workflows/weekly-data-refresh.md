@@ -66,7 +66,7 @@ post-steps:
         --baseline "$baseline"
 
 safe-outputs:
-  staged: true
+  staged: false
   create-pull-request:
     draft: true
     max: 1
@@ -105,6 +105,6 @@ replace valid checked-in data with a guess.
 8. Make no change when the available evidence does not justify one.
 
 The workflow rejects changes outside the data file, runs the repository tests,
-and validates the proposed data against the exact triggering revision. The safe
-output is staged, so it previews one draft PR rather than creating it. After
-reviewing successful previews, change `staged: true` to `staged: false`.
+and validates the proposed data against the exact triggering revision. A
+successful safe output opens one draft PR for human review and never writes
+directly to `main`.

@@ -26,7 +26,7 @@ Open the local URL printed by `serve`. Opening `index.html` directly is not supp
 
 ## Weekly refresh and safety
 
-`.github/workflows/weekly-data-refresh.md` is the human-authored GitHub Agentic Workflow. Its compiled `.lock.yml` is the executable workflow. Every Sunday it may research only the explicitly allowlisted source hosts, edit only `data/costs.v1.json`, and produce at most one staged draft pull request. It cannot push directly to `main`.
+`.github/workflows/weekly-data-refresh.md` is the human-authored GitHub Agentic Workflow. Its compiled `.lock.yml` is the executable workflow. Every Sunday it may research only the explicitly allowlisted source hosts, edit only `data/costs.v1.json`, and produce at most one draft pull request. It cannot push directly to `main`.
 
 Deterministic post-steps run the test suite and compare the candidate with the exact trigger revision. Weekly changes above 15% for adopted defaults or 25% for normalized evidence are blocked. Failed, inaccessible, or ambiguous sources retain the last-known-good value. University living-at-home allowances cannot be added to household housing, food, or transport.
 
@@ -40,7 +40,7 @@ GitHub Agentic Workflows are in public preview. For this personal public reposit
 2. Save it as the repository Actions secret `COPILOT_GITHUB_TOKEN`.
 3. Install the tooling with `gh extension install github/gh-aw`.
 4. After editing workflow frontmatter, run `gh aw compile --strict` and `gh aw validate --strict`, then commit both the Markdown source and generated lock file.
-5. Keep `staged: true` for preview-only runs. After reviewing successful previews, set it to `false` to allow creation of draft PRs; retain required checks and human merge review.
+5. Review and merge the draft PR produced by a successful refresh; retain required checks and human merge review.
 
 No GitHub App is required. Organization-owned repositories can instead enable organization-billed Copilot CLI and grant `copilot-requests: write`.
 
