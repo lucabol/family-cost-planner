@@ -69,8 +69,10 @@ test("converted edits preserve canonical precision without toggle drift", () => 
 });
 
 test("labels stale rates and validates provider responses", () => {
-  assert.equal(exchangeRateIsStale(validRate, new Date("2026-08-20T00:00:00Z")), false);
-  assert.equal(exchangeRateIsStale(validRate, new Date("2026-09-01T00:00:00Z")), true);
+  const staleAt = new Date(`${validRate.observationDate}T23:59:59Z`);
+  staleAt.setUTCDate(staleAt.getUTCDate() + validRate.staleAfterDays);
+  assert.equal(exchangeRateIsStale(validRate, staleAt), false);
+  assert.equal(exchangeRateIsStale(validRate, new Date(staleAt.getTime() + 1)), true);
   assert.throws(
     () => candidateFromResponse({ amount: 1, base: "EUR", date: "2026-08-18", rates: { GBP: 1 } }, validRate),
     /invalid EUR\/USD response/
